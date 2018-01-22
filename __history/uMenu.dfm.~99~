@@ -1,7 +1,7 @@
 object Form1: TForm1
   Left = 0
   Top = 0
-  Caption = 'Form1'
+  Caption = 'Dashboard'
   ClientHeight = 652
   ClientWidth = 926
   Color = clBtnFace
@@ -11,6 +11,7 @@ object Form1: TForm1
   Font.Name = 'Tahoma'
   Font.Style = []
   OldCreateOrder = False
+  Position = poScreenCenter
   ShowHint = True
   OnCreate = FormCreate
   PixelsPerInch = 96
@@ -985,7 +986,7 @@ object Form1: TForm1
         DrawingStyle = gdsClassic
         FixedCols = 0
         RowCount = 2
-        Options = [goFixedVertLine, goFixedHorzLine, goVertLine, goHorzLine, goRangeSelect, goEditing]
+        Options = [goFixedVertLine, goFixedHorzLine, goVertLine, goHorzLine, goEditing, goRowSelect]
         ScrollBars = ssBoth
         TabOrder = 0
         HoverRowCells = [hcNormal, hcSelected]
@@ -1110,13 +1111,16 @@ object Form1: TForm1
         Height = 137
         Cursor = crDefault
         ColCount = 2
+        Ctl3D = True
         DrawingStyle = gdsClassic
         FixedCols = 0
         RowCount = 2
         Options = [goFixedVertLine, goFixedHorzLine, goVertLine, goHorzLine, goRangeSelect, goEditing]
+        ParentCtl3D = False
         ScrollBars = ssBoth
         TabOrder = 1
         HoverRowCells = [hcNormal, hcSelected]
+        OnCellValidate = sgMailRulesCellValidate
         OnGetEditorType = sgMailRulesGetEditorType
         OnGetEditorProp = sgMailRulesGetEditorProp
         ActiveCellFont.Charset = DEFAULT_CHARSET
@@ -1125,6 +1129,7 @@ object Form1: TForm1
         ActiveCellFont.Name = 'Tahoma'
         ActiveCellFont.Style = [fsBold]
         ActiveCellColor = 15387318
+        AutoThemeAdapt = True
         ColumnHeaders.Strings = (
           'To'
           'When')
@@ -1525,6 +1530,7 @@ object Form1: TForm1
           FF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFF
           FF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00}
         TabOrder = 5
+        OnClick = btAddMailClick
         ImageIndex = 0
       end
       object btRemovemail: TsBitBtn
@@ -1568,6 +1574,7 @@ object Form1: TForm1
           FF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFF
           FF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00}
         TabOrder = 6
+        OnClick = btRemovemailClick
         ImageIndex = 0
       end
       object sDEDestination: TsDirectoryEdit
@@ -1981,6 +1988,7 @@ object Form1: TForm1
         0000000000000000000000000000000000000000000000000000}
       Spacing = 15
       TabOrder = 2
+      OnClick = btnSaveAsClick
     end
   end
   object sSkinManager1: TsSkinManager
@@ -3312,5 +3320,14 @@ object Form1: TForm1
     Root = 'rfDesktop'
     Left = 416
     Top = 273
+  end
+  object sOpenDialog2: TsOpenDialog
+    Left = 632
+    Top = 233
+  end
+  object JvBalloonHint1: TJvBalloonHint
+    DefaultIcon = ikWarning
+    Left = 576
+    Top = 344
   end
 end

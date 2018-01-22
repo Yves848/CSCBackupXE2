@@ -746,7 +746,7 @@ object Form1: TForm1
       SliderOn = False
     end
     object btnBackup: TsBitBtn
-      Left = 5
+      Left = 4
       Top = 527
       Width = 191
       Height = 49

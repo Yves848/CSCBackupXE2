@@ -7,7 +7,7 @@ uses
   Vcl.Controls, Vcl.Forms, Vcl.Dialogs, sSkinProvider, sSkinManager, Vcl.ExtCtrls, sPanel, AdvMemo, Vcl.Buttons, sSpeedButton, Vcl.StdCtrls, Vcl.Mask,
   sMaskEdit, sCustomComboEdit, sToolEdit, uAddEntry, Vcl.ComCtrls, sTreeView, acTitleBar, sListView, sEdit, sLabel, AdvSmoothButton, sButton, System.ImageList,
   Vcl.ImgList, acAlphaImageList, acPopupCtrls, sScrollBox, sFrameBar, sTrackBar, acSlider, sBevel, AdvUtil, Vcl.Grids, AdvObj, BaseGrid, AdvGrid, sBitBtn,
-  sDialogs, XSuperObject, uGreenockTools, uToolCompress, JvComponentBase, JvTrayIcon, advmjson, AdvSmoothLabel, acPathDialog;
+  sDialogs, XSuperObject, uGreenockTools, uToolCompress, JvComponentBase, JvTrayIcon, advmjson, AdvSmoothLabel, acPathDialog, JvBalloonHint;
 
 const
    eMailRegEx = '^([a-zA-Z0-9_\-\.]+)@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.)|(([a-zA-Z0-9\-]+\.)+))([a-zA-Z]{2,4}|[0-9]{1,3})(\]?)$';
@@ -60,6 +60,7 @@ type
     lFileName: TAdvSmoothLabel;
     sPathDialog1: TsPathDialog;
     sOpenDialog2: TsOpenDialog;
+    JvBalloonHint1: TJvBalloonHint;
     procedure sSpeedButton3Click(Sender: TObject);
     procedure sButton3Click(Sender: TObject);
     procedure sTBMaxFilesChange(Sender: TObject);
@@ -78,6 +79,7 @@ type
     procedure sgMailRulesCellValidate(Sender: TObject; ACol, ARow: Integer; var Value: string; var Valid: Boolean);
     procedure btAddMailClick(Sender: TObject);
     procedure btRemovemailClick(Sender: TObject);
+    procedure btnSaveAsClick(Sender: TObject);
   private
     { Déclarations privées }
     CurrentConfig: ISuperObject;
@@ -204,9 +206,6 @@ end;
 
 Procedure tForm1.Popup(sTitle: String; sMessage: String);
 Begin
-  If Not TrayIcon.Active Then
-    TrayIcon.Active := True;
-
   TrayIcon.BalloonHint(sTitle, sMessage);
 End;
 
@@ -239,15 +238,19 @@ begin
 
    ParseConfigFile(sConfig);
 
+   TrayIcon.Active := True;
+
    If bAuto Then
    Begin
       MakeArchive(sConfig);
       Application.Terminate;
    End;
+
+
    If Not bSilent Then
-  Begin
-    Show;
-  End;
+   Begin
+     Show;
+   End;
 end;
 
 
@@ -352,6 +355,8 @@ end;
 
 Procedure tForm1.UpdateMaxFiles;
 begin
+     //if sTBMaxFiles.Position = 1 then
+     
      sLMaxFiles.Caption := Format('Keep Max %d files',[sTBMaxFiles.Position]);
 end;
 
@@ -418,6 +423,27 @@ begin
       Close;
 end;
 
+procedure TForm1.btnSaveAsClick(Sender: TObject);
+var
+   lFile : tStrings;
+   X  : ISuperObject;
+   bSave : Boolean;
+begin
+   lFile := TStringList.Create;
+   CurrentConfig := BuildConfigFile;
+
+   bSave := sSaveDialog1.Execute;
+   if bSave then
+   begin
+      CurrentConfig.S['filename'] := sSaveDialog1.FileName;
+   end;
+
+
+   lFile.Text := CurrentConfig.AsJSON(true);
+   lFile.SaveToFile(CurrentConfig.S['filename']);
+   ParseConfigFile(CurrentConfig.S['filename']);
+end;
+
 procedure TForm1.btnSaveClick(Sender: TObject);
 var
    lFile : tStrings;
@@ -470,11 +496,17 @@ end;
 procedure TForm1.sgMailRulesCellValidate(Sender: TObject; ACol, ARow: Integer; var Value: string; var Valid: Boolean);
 var
  match: tMatch;
-
+ R : tRect;
 begin
      match := tRegex.match(Value, eMailRegEx);
      Valid := match.Success;
-
+     if not Valid then
+     begin
+        r := SGMailRules.CellRect(ACol, ARow);
+        r.TopLeft := sgMailRules.ClientToScreen(R.TopLeft);
+        R.BottomRight := sgMailRuleS.ClientToScreen(R.BottomRight);
+        JvBalloonHint1.ActivateHintRect(R,'Error !','Invalid Email Address');
+     end;
 end;
 
 procedure TForm1.sgMailRulesGetEditorProp(Sender: TObject; ACol, ARow: Integer; AEditLink: TEditLink);
