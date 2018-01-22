@@ -1,0 +1,89 @@
+Change Log
+----------
+
+2016-04-18		1.1.0.42
+				- Adding a priority to the Tar Thread and the Gzip Process.
+				  The priority is set by the "Priority" option of the "Running" node of the XML file (<Running Priority = "2" PopUps="True" Visible="False"/>)
+				  Possible values are :
+						0 : LOW_PRIORITY
+						1 : BELOW_NORMAL_PRIORITY
+						2 : NORMAL_PRIORITY
+						3 : ABOVE_NORMAL_PRIORITY
+						4 : HIGH_PRIORITY
+						5 : REALTIME_PRIORITY
+				  
+				  If "Priority" is not defined, the default value will be used : 2.
+
+				1.1.0.44
+				- Adding the test of the free disk space on the "Temp" location if a temporary directory is used.
+				- If the temporary directory is used, adding the Total disk space and the free disk space in the log and
+				  the result mails.
+				  
+2016-04-20      1.1.0.46
+				- Replacing the old tar & gzip method by "abbrevia" free compression components.
+				  The first tar library used can't handle long file names (100 caracters limitation).
+				- The gzip.exe and tar.exe (along with dependencies dll) won't be extract at the first run.
+				- New parameter added : /CreateDependencies
+				  This will extract everything needed to inflate and extract files from the backup.
+				- Archiving / compressing is made in a single pass.
+				
+2016-04-27		1.1.0.47
+				- Removing tar / gzip components and resources.
+				- Using standard zip compression.
+				
+2016-04-28		1.1.0.48
+				- Changing archive extension to ".cor" to avoid cryptovirus corruption.
+				
+				1.1.0.49
+				- the /CreateDependencies parameter extract all the files necessary to deflate zip file.
+				
+2016-05-01		1.1.0.50
+				- Included in "UpdateCSC.exe" tool.  From 1.1.0.50, always use UpdateCSC.exe to install and update CSCBackupEX.
+				
+2016-08-04		1.1.0.51
+				- Fixing the "uncompressed size" and "compressed size" on the report.
+				- Adding a "uncompressed size" and "compressed size" on the log for each file.
+				
+				
+2016-08-08		1.1.0.53
+				- Visual bug fixed.
+				
+2016-09-02		1.1.0.54
+				- Correction the title of the save and load dialogs.
+				
+2016-09-02		1.1.0.55
+				- Access violation when started in full auto mode (1.1.0.54 bug) -> FIXED
+				
+2016-09-08		1.1.0.57
+				- Improving error checking and notification.
+				
+2017-03-20		1.1.1.0
+				- Bug fix : When closing the console with the "x" (Windows close), the application frees correctly.
+				- Improving the error checking when adding the files to the archive.
+				  The errors are now in the log.
+				- Logs (headers and details) are now sent to a "service" in a JSON format.
+				  This is the first step to avoid mail relay errors.
+				  In the version, mails are still the main logging feature.
+				  
+2017-05-17		1.1.1.2
+				- Modifying date and time formats to suit with SQLite on the dash server.
+
+2017-11-28    2.0.0.0
+				- New version to fix the "Access Violations" on Win 2008 Server, Win2012 server and Win10 with last updates.
+				- Using JSON config and log files.
+				- Using new PHP scripts to log informations uploaded by the application.
+				- Sending mails from server.  No more SMTP configuration needed.
+
+2017-12-01		2.0.1.0
+				- SqlServer Instance (Boostrap based) autodetection.
+
+2018-01-15		2.0.2.0
+				- Read APB Number from JSON file (APB.JSON) created by Update / Install Process.
+					=> Error getting APB Number from Database (No user defined yet in SQLSErver)
+
+2018-01-16		2.0.2.1
+				- Using JMG API to retrieve Pharmacy informations.
+
+2018-01-17		2.1.0.0
+				- New Console application.
+					Fully functionnal (Still in test)

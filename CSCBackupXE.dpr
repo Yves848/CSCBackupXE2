@@ -1,0 +1,76 @@
+program CSCBackupXE;
+
+{$R 'gzip.res' 'gzip.rc'}
+
+uses
+  Vcl.Forms,
+  Sysutils,
+  uDashBoard in 'uDashBoard.pas' {fDash},
+  uMenu in 'uMenu.pas' {Form1},
+  uGreenockTools in 'uGreenockTools.pas',
+  uProgress in 'uProgress.pas' {fProgress},
+  uToolCompress in 'uToolCompress.pas',
+  uHTTPTools in 'uHTTPTools.pas',
+  uMain in 'uMain.pas' {FrmMain},
+  uAddEntry in 'uAddEntry.pas' {fAddEntry};
+
+var
+   iParam : Integer;
+
+{$R *.res}
+   Procedure ProcessParam(sParam: String);
+var
+  iPos: Integer;
+begin
+  //aLog.Send('ProcessParam => '+sParam);
+  iPos := Pos('/CREATEDEPENDENCIES', UpperCase(sParam));
+  if iPos <> 0 then
+  begin
+    bExtract := True;
+    exit;
+  end;
+
+  iPos := Pos('/CONFIG', UpperCase(sParam));
+  if iPos <> 0 then
+  begin
+    iPos := Pos('=', sParam);
+    if iPos <> 0 then
+    begin
+      sConfig := Copy(sParam, iPos + 1, length(sParam) - iPos);
+    end;
+    exit;
+  end;
+
+  iPos := Pos('/AUTO', UpperCase(sParam));
+  if iPos <> 0 then
+  begin
+    bAuto := True;
+    //bOverrideParams := True;
+    exit;
+  end;
+
+  iPos := Pos('/SILENT', UpperCase(sParam));
+  if iPos <> 0 then
+  begin
+    bSilent := True;
+    //bOverrideParams := True;
+    exit;
+  end;
+
+
+
+end;
+begin
+  Application.Initialize;
+  iParam := 1;
+  sConfig := '';
+  while iParam <= ParamCount do
+  begin
+    ProcessParam(Paramstr(iParam));
+    inc(iParam);
+  end;
+  Application.ShowMainForm := False;
+  Application.MainFormOnTaskbar := not bSilent;
+  Application.CreateForm(TForm1, Form1);
+  Application.Run;
+end.

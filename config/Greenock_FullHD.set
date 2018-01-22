@@ -1,0 +1,39 @@
+{
+    "filename":"C:\\Develop\\CSCBackupXE2\\config\\Greenock_FullHD.set",
+    "printreport": false,
+    "printer": "Default",
+    "compressionlevel": 0,
+    "destination": "S:\\",
+    "nbmax": 2,
+    "agemax": 0,
+    "version": true,
+    "local": true,
+    "popups": true,
+    "visible": true,
+    "generatelog": true,
+    "server": "localhost\\sqlserver",
+    "rules":
+    [
+        {
+            "to": "apotheek.vandenweyer@telenet.be",
+            "when": 0                 
+        },
+        {           
+            "to": "yves.godart@corilus.be",
+            "when": 0             
+        },
+        {           
+            "to": "st.raid@corilus.be",
+            "when": 0             
+        }
+    ],                    
+    "entries":
+    [
+        
+        {
+            "name": "C:\\Documents and Settings\\All Users\\Application Data\\Corilus\\Common\\Data\\SQLServer\\Backup\\",
+            "type": 0,
+            "recurs": 1
+        }
+    ]
+}  

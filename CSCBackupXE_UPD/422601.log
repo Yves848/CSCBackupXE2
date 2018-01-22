@@ -1,0 +1,282 @@
+{
+  "apb":"422601",
+  "pharmacyname":"",
+  "dateupdate":"2017-12-28 11:47:09.277",
+  "updbackup":"2.0.0.29",
+  "cscversionbefore":"None",
+  "cscversionafter":"2.0.0.0",
+  "result":  0,
+  "entries":  
+  [
+    {
+      "tag":"11:47:09.277",
+      "line":"TempPath : C:\\Users\\Corilususer\\AppData\\Local\\Temp\\Corilus_BackupXE\\",
+      "type":      0    
+    },
+    {
+      "tag":"11:47:09.277",
+      "line":"UndoPath : C:\\Users\\Corilususer\\AppData\\Local\\Temp\\Corilus_BackupXE\\Undo\\",
+      "type":      0    
+    },
+    {
+      "tag":"11:47:09.808",
+      "line":"Undo file generated at [C:\\Users\\Corilususer\\AppData\\Local\\Temp\\Corilus_BackupXE\\Undo\\Old.zip]",
+      "type":      0    
+    },
+    {
+      "tag":"11:47:11.636",
+      "line":"Process OPSWBACKUP.EXE is not running",
+      "type":      0    
+    },
+    {
+      "tag":"11:47:11.636",
+      "line":"Process CSCBACKUPXE.EXE is not running",
+      "type":      0    
+    },
+    {
+      "tag":"11:47:11.652",
+      "line":"Extracting [C:\\Users\\Corilususer\\AppData\\Local\\Temp\\Corilus_BackupXE\\CSCXE.zip]",
+      "type":      0    
+    },
+    {
+      "tag":"11:47:11.652",
+      "line":"Decompression",
+      "type":      0    
+    },
+    {
+      "tag":"11:47:11.652",
+      "line":"Zip content : ",
+      "type":      0    
+    },
+    {
+      "tag":"11:47:11.652",
+      "line":"  - ChangeLog.txt [1410] -> [3188] CRC : 1650435504",
+      "type":      0    
+    },
+    {
+      "tag":"11:47:11.652",
+      "line":"  - CSCBackupXE.exe [5162980] -> [10786816] CRC : 677185810",
+      "type":      0    
+    },
+    {
+      "tag":"11:47:11.855",
+      "line":"Deleting Zip file",
+      "type":      0    
+    },
+    {
+      "tag":"11:47:11.855",
+      "line":"Directory [C:\\corilus_backup\\] found.  Renaming to [C:\\corilus_backup_Old\\]",
+      "type":      0    
+    },
+    {
+      "tag":"11:47:11.871",
+      "line":"Creating new directory [C:\\corilus_backup\\]",
+      "type":      0    
+    },
+    {
+      "tag":"11:47:11.871",
+      "line":"Start searching for .bat files in [C:\\corilus_backup_Old\\]",
+      "type":      0    
+    },
+    {
+      "tag":"11:47:11.871",
+      "line":"File [C:\\corilus_backup_Old\\BackupMD.bat] found",
+      "type":      0    
+    },
+    {
+      "tag":"11:47:11.871",
+      "line":"File [C:\\corilus_backup_Old\\BackupPhWin.bat] found",
+      "type":      0    
+    },
+    {
+      "tag":"11:47:11.871",
+      "line":"File [C:\\corilus_backup_Old\\Backup_MD.bat] found",
+      "type":      0    
+    },
+    {
+      "tag":"11:47:11.871",
+      "line":"File [C:\\corilus_backup_Old\\Greenock_FullHD.bat] found",
+      "type":      0    
+    },
+    {
+      "tag":"11:47:11.871",
+      "line":"File [C:\\corilus_backup_Old\\Greenock_LogHD.bat] found",
+      "type":      0    
+    },
+    {
+      "tag":"11:47:11.871",
+      "line":"   Loading [C:\\corilus_backup_Old\\BackupMD.bat] file",
+      "type":      0    
+    },
+    {
+      "tag":"11:47:11.871",
+      "line":"      Searching for \"opswbackup.exe\" in batch file",
+      "type":      0    
+    },
+    {
+      "tag":"11:47:11.871",
+      "line":"   Saving new batch [C:\\corilus_backup\\BackupMD.bat]",
+      "type":      0    
+    },
+    {
+      "tag":"11:47:11.871",
+      "line":"   Loading [C:\\corilus_backup_Old\\BackupPhWin.bat] file",
+      "type":      0    
+    },
+    {
+      "tag":"11:47:11.871",
+      "line":"      Searching for \"opswbackup.exe\" in batch file",
+      "type":      0    
+    },
+    {
+      "tag":"11:47:11.871",
+      "line":"      ** found **",
+      "type":      0    
+    },
+    {
+      "tag":"11:47:11.871",
+      "line":"         Converting \"C:\\corilus_backup\\opswbackup.exe C:\\corilus_backup\\Backup_phwin.set\" to \"C:\\corilus_backup\\CSCBackupXE.exe /config=\"C:\\corilus_backup\\Backup_phwin.xml\" /auto\"",
+      "type":      0    
+    },
+    {
+      "tag":"11:47:11.871",
+      "line":"   Saving new batch [C:\\corilus_backup\\BackupPhWin.bat]",
+      "type":      0    
+    },
+    {
+      "tag":"11:47:11.871",
+      "line":"   Loading [C:\\corilus_backup_Old\\Backup_MD.bat] file",
+      "type":      0    
+    },
+    {
+      "tag":"11:47:11.871",
+      "line":"      Searching for \"opswbackup.exe\" in batch file",
+      "type":      0    
+    },
+    {
+      "tag":"11:47:11.871",
+      "line":"   Saving new batch [C:\\corilus_backup\\Backup_MD.bat]",
+      "type":      0    
+    },
+    {
+      "tag":"11:47:11.871",
+      "line":"   Loading [C:\\corilus_backup_Old\\Greenock_FullHD.bat] file",
+      "type":      0    
+    },
+    {
+      "tag":"11:47:11.871",
+      "line":"      Searching for \"opswbackup.exe\" in batch file",
+      "type":      0    
+    },
+    {
+      "tag":"11:47:11.871",
+      "line":"      ** found **",
+      "type":      0    
+    },
+    {
+      "tag":"11:47:11.871",
+      "line":"         Converting \"C:\\corilus_backup\\opswbackup.exe C:\\corilus_backup\\Greenock_FullHD.set\" to \"C:\\corilus_backup\\CSCBackupXE.exe /config=\"C:\\corilus_backup\\Greenock_FullHD.xml\" /auto\"",
+      "type":      0    
+    },
+    {
+      "tag":"11:47:11.871",
+      "line":"   Saving new batch [C:\\corilus_backup\\Greenock_FullHD.bat]",
+      "type":      0    
+    },
+    {
+      "tag":"11:47:11.871",
+      "line":"   Loading [C:\\corilus_backup_Old\\Greenock_LogHD.bat] file",
+      "type":      0    
+    },
+    {
+      "tag":"11:47:11.871",
+      "line":"      Searching for \"opswbackup.exe\" in batch file",
+      "type":      0    
+    },
+    {
+      "tag":"11:47:11.871",
+      "line":"      ** found **",
+      "type":      0    
+    },
+    {
+      "tag":"11:47:11.871",
+      "line":"         Converting \"C:\\corilus_backup\\opswbackup.exe C:\\corilus_backup\\Greenock_LogHD.set\" to \"C:\\corilus_backup\\CSCBackupXE.exe /config=\"C:\\corilus_backup\\Greenock_LogHD.xml\" /auto\"",
+      "type":      0    
+    },
+    {
+      "tag":"11:47:11.871",
+      "line":"   Saving new batch [C:\\corilus_backup\\Greenock_LogHD.bat]",
+      "type":      0    
+    },
+    {
+      "tag":"11:47:11.871",
+      "line":"Start searching for .set files in [C:\\corilus_backup_Old\\]",
+      "type":      0    
+    },
+    {
+      "tag":"11:47:11.886",
+      "line":"File [C:\\corilus_backup_Old\\Backup_PhWin.set] found",
+      "type":      0    
+    },
+    {
+      "tag":"11:47:11.886",
+      "line":"File [C:\\corilus_backup_Old\\Greenock_FullHD.set] found",
+      "type":      0    
+    },
+    {
+      "tag":"11:47:11.886",
+      "line":"File [C:\\corilus_backup_Old\\Greenock_LogHD.set] found",
+      "type":      0    
+    },
+    {
+      "tag":"11:47:11.886",
+      "line":"   Loading [C:\\corilus_backup_Old\\Backup_PhWin.set] file",
+      "type":      0    
+    },
+    {
+      "tag":"11:47:11.886",
+      "line":"   Saving [C:\\corilus_backup\\Backup_PhWin.set] file",
+      "type":      0    
+    },
+    {
+      "tag":"11:47:11.886",
+      "line":"   Loading [C:\\corilus_backup_Old\\Greenock_FullHD.set] file",
+      "type":      0    
+    },
+    {
+      "tag":"11:47:11.886",
+      "line":"   Saving [C:\\corilus_backup\\Greenock_FullHD.set] file",
+      "type":      0    
+    },
+    {
+      "tag":"11:47:11.886",
+      "line":"   Loading [C:\\corilus_backup_Old\\Greenock_LogHD.set] file",
+      "type":      0    
+    },
+    {
+      "tag":"11:47:11.886",
+      "line":"   Saving [C:\\corilus_backup\\Greenock_LogHD.set] file",
+      "type":      0    
+    },
+    {
+      "tag":"11:47:11.886",
+      "line":"C:\\Users\\Corilususer\\AppData\\Local\\Temp\\Corilus_BackupXE\\ChangeLog.txt ==> C:\\corilus_backup\\ChangeLog.txt",
+      "type":      0    
+    },
+    {
+      "tag":"11:47:11.933",
+      "line":"C:\\Users\\Corilususer\\AppData\\Local\\Temp\\Corilus_BackupXE\\CSCBackupXE.exe ==> C:\\corilus_backup\\CSCBackupXE.exe",
+      "type":      0    
+    },
+    {
+      "tag":"11:47:11.933",
+      "line":"C:\\Users\\Corilususer\\AppData\\Local\\Temp\\Corilus_BackupXE\\Undo ==> C:\\corilus_backup\\Undo",
+      "type":      0    
+    },
+    {
+      "tag":"11:47:11.949",
+      "line":"** Update successefully terminated **",
+      "type":      0    
+    }  
+  ]
+}

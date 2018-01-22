@@ -1,0 +1,29 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<BorlandProject>
+	<Transactions>
+    <Transaction>1899/12/30 00:00:00.000.410,=D:\Develop\CSCBackupXE\UpdateCSC\Unit1.pas</Transaction>
+    <Transaction>1899/12/30 00:00:00.000.520,=D:\Develop\CSCBackupXE\UpdateCSC\Unit1.pas</Transaction>
+    <Transaction>1899/12/30 00:00:00.000.090,=D:\Develop\CSCBackupXE\UpdateCSC\Unit1.pas</Transaction>
+    <Transaction>1899/12/30 00:00:00.000.135,C:\Users\Yves\Documents\Embarcadero\Studio\Projets\Unit4.pas=D:\Develop\CSCBackupXE\UpdateCSC\uMain.pas</Transaction>
+    <Transaction>1899/12/30 00:00:00.000.804,=C:\Users\Yves\Documents\Embarcadero\Studio\Projets\Unit4.pas</Transaction>
+    <Transaction>1899/12/30 00:00:00.000.797,=D:\Develop\CSCBackupXE\PhToolsStr.pas</Transaction>
+    <Transaction>1899/12/30 00:00:00.000.135,C:\Users\Yves\Documents\Embarcadero\Studio\Projets\Unit4.dfm=D:\Develop\CSCBackupXE\UpdateCSC\uMain.dfm</Transaction>
+    <Transaction>1899/12/30 00:00:00.000.112,=D:\Develop\CSCBackupXE\backupUtils.pas</Transaction>
+    <Transaction>1899/12/30 00:00:00.000.759,D:\Develop\CSCBackupXE\backupUtils.pas=</Transaction>
+    <Transaction>1899/12/30 00:00:00.000.876,D:\Develop\CSCBackupXE\UpdateCSC\Unit1.pas=D:\Develop\CSCBackupXE\UpdateCSC\uLib.pas</Transaction>
+    <Transaction>1899/12/30 00:00:00.000.112,=C:\Develop\CSCBackupXE\uversion.pas</Transaction>
+    <Transaction>1899/12/30 00:00:00.000.328,=D:\Develop\CSCBackupXE\UpdateCSC\gzip.rc</Transaction>
+    <Transaction>1899/12/30 00:00:00.000.557,=D:\Develop\CSCBackupXE\phMath.pas</Transaction>
+    <Transaction>1899/12/30 00:00:00.000.613,=D:\Develop\tools\VerysimpleXML\Source\Xml.VerySimple.pas</Transaction>
+    <Transaction>1899/12/30 00:00:00.000.634,D:\Develop\CSCBackupXE\uEncryption.pas=D:\Develop\CSCBackupXE\UpdateCSC\Unit1.pas</Transaction>
+    <Transaction>1899/12/30 00:00:00.000.552,C:\Users\Yves\Documents\Embarcadero\Studio\Projets\Project2.dproj=C:\Users\Yves\Documents\Embarcadero\Studio\Projets\UpdBackup.dproj</Transaction>
+    <Transaction>1899/12/30 00:00:00.000.170,C:\Users\Yves\Documents\Embarcadero\Studio\Projets\UpdBackup.dproj=D:\Develop\CSCBackupXE\UpdateCSC\UpdBackup.dproj</Transaction>
+    <Transaction>1899/12/30 00:00:00.000.878,D:\Develop\CSCBackupXE\uRecords.pas=D:\Develop\CSCBackupXE\UpdateCSC\Unit1.pas</Transaction>
+    <Transaction>1899/12/30 00:00:00.000.322,=C:\Users\Yves\Documents\Embarcadero\Studio\Projets\Unit2.pas</Transaction>
+    <Transaction>1899/12/30 00:00:00.000.239,=C:\Users\Yves\Documents\Embarcadero\Studio\Projets\Unit2.pas</Transaction>
+    <Transaction>2017/11/29 07:56:26.000.373,C:\Develop\tools\VerysimpleXML\Source\Xml.VerySimple.pas=</Transaction>
+  </Transactions>
+	<ActiveMobileDevice>
+		<NoProfile iOSSimulator="iPhone5"/>
+	</ActiveMobileDevice>
+</BorlandProject>

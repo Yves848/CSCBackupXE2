@@ -1,0 +1,199 @@
+{
+  "apb":"274309",
+  "datestart":"2018-01-18 10:20:18.327",
+  "datestop":"2018-01-18 10:23:37.661",
+  "result":  0,
+  "cscversion":"2.1.0.0",
+  "version":"1.0.62",
+  "patch":"P28",
+  "pharma":"Pharmacie Sotiaux, S.A.",
+  "group":"Null",
+  "Errors":  
+  [
+    {
+      "tag":"2018-01-18 10:20:18.911",
+      "file":"c:\\ProgramData\\Corilus\\Common\\Data\\SQLServer\\backup_Before_Recup0\\",
+      "message":"Directory not found",
+      "code":      -1    
+    },
+    {
+      "tag":"2018-01-18 10:20:18.912",
+      "file":"ProgramData/Corilus/Common/Data/SQLServer/backup_Before_Recup/cpcl.bak",
+      "message":"Cannot insert file - duplicates stored name",
+      "code":      7    
+    },
+    {
+      "tag":"2018-01-18 10:20:18.912",
+      "file":"ProgramData/Corilus/Common/Data/SQLServer/backup_Before_Recup/Greenock.bak",
+      "message":"Cannot insert file - duplicates stored name",
+      "code":      7    
+    },
+    {
+      "tag":"2018-01-18 10:22:26.506",
+      "file":"ProgramData/Corilus/Common/Data/SQLServer/Data/CPCL.mdf",
+      "message":"File Open Error",
+      "code":      0    
+    },
+    {
+      "tag":"2018-01-18 10:22:26.516",
+      "file":"ProgramData/Corilus/Common/Data/SQLServer/Data/Delphicare.mdf",
+      "message":"File Open Error",
+      "code":      0    
+    },
+    {
+      "tag":"2018-01-18 10:22:26.518",
+      "file":"ProgramData/Corilus/Common/Data/SQLServer/Data/Greenock.mdf",
+      "message":"File Open Error",
+      "code":      0    
+    },
+    {
+      "tag":"2018-01-18 10:22:26.521",
+      "file":"ProgramData/Corilus/Common/Data/SQLServer/Data/GreenockINN.mdf",
+      "message":"File Open Error",
+      "code":      0    
+    },
+    {
+      "tag":"2018-01-18 10:22:26.522",
+      "file":"ProgramData/Corilus/Common/Data/SQLServer/Log/CPCL_log.ldf",
+      "message":"File Open Error",
+      "code":      0    
+    },
+    {
+      "tag":"2018-01-18 10:22:26.526",
+      "file":"ProgramData/Corilus/Common/Data/SQLServer/Log/Delphicare_log.ldf",
+      "message":"File Open Error",
+      "code":      0    
+    },
+    {
+      "tag":"2018-01-18 10:22:26.531",
+      "file":"ProgramData/Corilus/Common/Data/SQLServer/Log/GreenockINN_log.ldf",
+      "message":"File Open Error",
+      "code":      0    
+    },
+    {
+      "tag":"2018-01-18 10:22:26.534",
+      "file":"ProgramData/Corilus/Common/Data/SQLServer/Log/Greenock_log.ldf",
+      "message":"File Open Error",
+      "code":      0    
+    },
+    {
+      "tag":"2018-01-18 10:23:37.661",
+      "file":"",
+      "message":"Archive Invalid",
+      "code":      -1    
+    }  
+  ],
+  "entries":  
+  [
+    {
+      "tag":"2018-01-18 10:20:18.987",
+      "name":"ProgramData/Corilus/Common/Data/SQLServer/backup_Before_Recup/cpcl.bak",
+      "uncompressed":      4358656,
+      "compressed":      628406    
+    },
+    {
+      "tag":"2018-01-18 10:20:19.307",
+      "name":"ProgramData/Corilus/Common/Data/SQLServer/backup_Before_Recup/Greenock.bak",
+      "uncompressed":      819099136,
+      "compressed":      116313126    
+    },
+    {
+      "tag":"2018-01-18 10:20:46.545",
+      "name":"GOG Games/PlanetNomads/PlanetNomads_Data/output_log.txt",
+      "uncompressed":      22547,
+      "compressed":      3074    
+    },
+    {
+      "tag":"2018-01-18 10:20:46.560",
+      "name":"Recups/backups/Farmad/ACURA_714903/DBGreenock/CPCL.BAK",
+      "uncompressed":      4321280,
+      "compressed":      607466    
+    },
+    {
+      "tag":"2018-01-18 10:20:46.879",
+      "name":"Recups/backups/Farmad/ACURA_714903/DBGreenock/GREENOCK.BAK",
+      "uncompressed":      819126272,
+      "compressed":      116314233    
+    },
+    {
+      "tag":"2018-01-18 10:21:14.235",
+      "name":"ProgramData/Corilus/Common/Data/SQLServer/backup/GreenockMaintenanceDB_APB.log",
+      "uncompressed":      714,
+      "compressed":      279    
+    },
+    {
+      "tag":"2018-01-18 10:21:14.252",
+      "name":"ProgramData/Corilus/Common/Data/SQLServer/backup_After_Recup/cpcl.bak",
+      "uncompressed":      280081920,
+      "compressed":      40610677    
+    },
+    {
+      "tag":"2018-01-18 10:21:24.670",
+      "name":"ProgramData/Corilus/Common/Data/SQLServer/backup_After_Recup/Greenock.bak",
+      "uncompressed":      1021438464,
+      "compressed":      151699676    
+    },
+    {
+      "tag":"2018-01-18 10:21:59.659",
+      "name":"ProgramData/Corilus/Common/Data/SQLServer/backup_Before_Recup_Frist/cpcl.bak",
+      "uncompressed":      4357632,
+      "compressed":      600322    
+    },
+    {
+      "tag":"2018-01-18 10:21:59.896",
+      "name":"ProgramData/Corilus/Common/Data/SQLServer/backup_Before_Recup_Frist/Greenock.bak",
+      "uncompressed":      744596992,
+      "compressed":      111296375    
+    },
+    {
+      "tag":"2018-01-18 10:22:26.539",
+      "name":"ProgramData/Corilus/Common/Data/SQLServer/SetupBackup/CPCL.bak",
+      "uncompressed":      4357632,
+      "compressed":      602438    
+    },
+    {
+      "tag":"2018-01-18 10:22:26.802",
+      "name":"ProgramData/Corilus/Common/Data/SQLServer/SetupBackup/Delphicare.bak",
+      "uncompressed":      234979840,
+      "compressed":      48896445    
+    },
+    {
+      "tag":"2018-01-18 10:22:37.109",
+      "name":"ProgramData/Corilus/Common/Data/SQLServer/SetupBackup/Greenock.bak",
+      "uncompressed":      1245868544,
+      "compressed":      162709684    
+    },
+    {
+      "tag":"2018-01-18 10:23:18.684",
+      "name":"ProgramData/Corilus/Common/Data/SQLServer/SetupBackup/GreenockINN.bak",
+      "uncompressed":      13718016,
+      "compressed":      2433352    
+    },
+    {
+      "tag":"2018-01-18 10:23:19.356",
+      "name":"ProgramData/Corilus/Common/Data/SQLServer/SetupBackup/GreenockSvcLogging.bak",
+      "uncompressed":      489772544,
+      "compressed":      13894111    
+    }  
+  ],
+  "results":  
+  {
+    "result":    1,
+    "errors":    12,
+    "archivename":"e:\\temp\\20180118102018_1.0.62P28_274309.cor"  
+  },
+  "rules":  
+  [
+    {
+      "to":"st.raid@corilus.be",
+      "when":      0    
+    }  
+  ],
+  "upload":  
+  [
+    {
+      "result":"ok",
+      "apb":"274309"    
+    }  
+  ]
+}

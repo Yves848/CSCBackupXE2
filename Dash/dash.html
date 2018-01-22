@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>CSCBackupXE Dashboard</title>
+    <link rel="stylesheet" type="text/css" href="assets/css/tables_style.css">
+    <link rel="stylesheet" type="text/css" href="assets/css/bootstrap.min.css">
+    <link rel="stylesheet" type="text/css" href="assets/css/styles.css">
+    <script src="assets/js/angular.js"></script>
+    <script src="assets/js/angular-animate.js"></script>
+    <script src="assets/js/angular-sanitize.js"></script>
+    <script src="assets/js/ui-bootstrap-tpls-2.5.0.js"></script>
+    <script src="assets/js/angular-route.js"></script>
+    <script src="assets/js/dirPagination.js"></script>
+    <script src="assets/js/CSCBackupDash.js"></script>
+    <script src="assets/js/test.js"></script>
+</head>
+<body ng-app="CSCBackupDash" ng-controller="MasterController">
+
+<div class="container-fluid">
+    <div class="text-left">
+        <h2>CSCBackup Dashboard</h2>
+    </div>
+
+    <div class="col-lg-2">
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                <h4 class="panel-title">
+                        Menu
+                </h4>
+            </div>
+            <div collapse="isCollapsed">
+                <div class="panel-body">
+
+                    <button type="button" class="btn btn-sm btn-block btn-primary" ng-click="redirect('/pharma')">Pharmacies</button>
+                    <hr>
+                    <button type="button" class="btn btn-sm btn-block btn-primary" ng-click="redirect('/updates/master')">Updates</button>
+                    <button type="button" class="btn btn-sm btn-block btn-primary" ng-click="redirect('/backups/master')">Backups</button>
+                    <hr>
+                    <!--
+                    <button type="button" class="btn btn-sm btn-block btn-info" ng-click="sendJSON()">Test</button>
+                   -->
+
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-lg-10">
+        <div class="panel panel-default">
+            <div ng-view></div>
+        </div>
+    </div>
+</div>
+</body>
+</html>

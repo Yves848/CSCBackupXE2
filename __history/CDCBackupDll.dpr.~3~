@@ -1,0 +1,21 @@
+library CDCBackupDll;
+
+uses
+  System.SysUtils,
+  System.Classes;
+
+type
+  tCallBackFunction = function(i : Integer) : boolean;
+
+  procedure TestCallBack(func : tCallBackFunction);
+  var
+    sigAlive : Boolean;
+  begin
+
+  end;
+{$R *.res}
+
+begin
+
+   exports TestCallBack;
+end.

@@ -1,0 +1,66 @@
+program CSCBackupXE;
+
+{$R 'gzip.res' 'gzip.rc'}
+
+uses
+  Vcl.Forms,
+  Sysutils,
+  uDashBoard in 'uDashBoard.pas' {fDash},
+  Unit1 in 'Unit1.pas' {Form1},
+  uGreenockTools in 'uGreenockTools.pas',
+  uProgress in 'uProgress.pas' {fProgress},
+  uToolCompress in 'uToolCompress.pas';
+
+var
+   iParam : Integer;
+
+{$R *.res}
+   Procedure ProcessParam(sParam: String);
+var
+  iPos: Integer;
+begin
+  //aLog.Send('ProcessParam => '+sParam);
+  iPos := Pos('/CREATEDEPENDENCIES', UpperCase(sParam));
+  if iPos <> 0 then
+  begin
+    bExtract := True;
+    exit;
+  end;
+
+  iPos := Pos('/CONFIG', UpperCase(sParam));
+  if iPos <> 0 then
+  begin
+    iPos := Pos('=', sParam);
+    if iPos <> 0 then
+    begin
+      sConfig := Copy(sParam, iPos + 1, length(sParam) - iPos);
+    end;
+    exit;
+  end;
+
+  iPos := Pos('/AUTO', UpperCase(sParam));
+  if iPos <> 0 then
+  begin
+    bAuto := True;
+    //bOverrideParams := True;
+    exit;
+  end;
+
+  iPos := Pos('/SILENT', UpperCase(sParam));
+  if iPos <> 0 then
+  begin
+    bSilent := True;
+    //bOverrideParams := True;
+    exit;
+  end;
+
+
+
+end;
+begin
+  Application.Initialize;
+  Application.ShowMainForm := False;
+  Application.MainFormOnTaskbar := not bSilent;
+  Application.CreateForm(TfDash, fDash);
+  Application.Run;
+end.

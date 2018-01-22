@@ -1,0 +1,43 @@
+{
+    "apb":"110312",
+    "datestart":"2017-11-23 07:56:38.225",
+    "datestop":"2017-11-23 07:57:12.627",
+    "Result":  0,
+    "Errors":
+    [
+        {
+            "tag":"2017-11-23 07:56:38.313",
+            "file":"c:\\FARMADWIN2\\Database\\delphi.gdb0",
+            "message":"File not found",
+            "code":      -1
+        }
+    ],
+    "Entries":
+    [
+        {
+            "tag":"2017-11-23 07:56:38.327",
+            "line":"c:\\ProgramData\\Corilus\\Common\\Data\\SQLServer\\backup_Before_Recup\\cpcl.bak"
+        },
+        {
+            "tag":"2017-11-23 07:56:38.602",
+            "line":"c:\\ProgramData\\Corilus\\Common\\Data\\SQLServer\\backup_Before_Recup\\Greenock.bak"
+        }
+    ],
+    "results":
+    {
+        "result":    1,
+        "errors":    1,
+        "archivename":"c:\\temp\\20171123075638_1.0.62P28_110312.cor"
+    },
+    "rules":
+    [
+        {
+            "to": "yves.godart@gmail.com",
+            "when": 0
+        },
+        {
+            "to": "yves.godart@corilus.be",
+            "when": 1
+        }
+    ]
+}   

@@ -1,0 +1,811 @@
+Unit uToolCompress;
+
+Interface
+Uses
+  System.SysUtils,
+  System.Classes,
+  System.IOUtils,
+  System.DateUtils,
+  Winapi.Windows,
+  Winapi.Messages,
+  Vcl.Dialogs,
+  Vcl.ComCtrls,
+  Vcl.Forms,
+  UVar,
+  XSuperObject,
+  AbBase,
+  AbBrowse,
+  AbZBrows,
+  AbZipper,
+  AbZipKit,
+  AbComCtrls,
+  AbMeter,
+  AbArcTyp,
+  AbUtils,
+  abZipTyp,
+  abconst,
+  uGreenockTools,
+  uProgress,
+  uHTTPTools;
+
+Const
+  sFormatMaxFiles   = 'Keep Max %d files';
+  sFormatMaxDays    = 'Age Max %d days';
+
+Type
+  pBackupFileProperties = ^tRecordFileProperties;
+
+  tRecordFileProperties = Record
+    bFileExist: Boolean;
+    APBNr: String;
+    VersionNr: String;
+    fileDateTime: tDateTime;
+    NameDateTime: tDateTime;
+    fileSize: cardinal;
+  End;
+
+  tItemProgress = Procedure(item: TAbArchiveItem; iPos, iMax: Integer) Of
+    Object;
+  tSaveProgress = Procedure(iPos, iMax: Integer) Of Object;
+  tabZipArchiveItemProgress = Procedure(Sender: TObject; item: TAbArchiveItem;
+    Progress: Byte; Var Abort: Boolean) Of Object;
+  tPopUpEvent = Procedure(sTitle: String; sMessage: String) Of Object;
+
+  tBackupLog = Class(TObject)
+  private
+    Procedure setApb(Value: String);
+    Function GetApb: String;
+    Procedure SetDateStop(pDate: String);
+    Function GetDateStop: String;
+    Function GetErrors: Integer;
+  public
+    jsLog: ISuperObject;
+    sPath: String;
+    Constructor create(pApb: String = '999999');
+    Procedure AddEntry(pMessage: String);
+    Procedure AddError(pFile: String; pMessage: String; iCode: Integer);
+    Procedure GetLog(pLines: tstrings; bClear: Boolean = false);
+    Property Apb: String read GetApb write setApb;
+    Property DateStop: String read GetDateStop write SetDateStop;
+    Property Errors: Integer read GetErrors;
+  End;
+
+  tBackupConfig = Class(TObject)
+  private
+
+  public
+
+  End;
+
+  tToCompress = Class(TObject)
+  private
+    //abZip: TAbZipper;
+    abZip: TAbZipKit;
+    Config: ISuperObject;
+    fOnItemProgress: tItemProgress;
+    fOnSaveProgress: tSaveProgress;
+    fVisible: Boolean;
+    fUseTemp: Boolean;
+    fLog: Boolean;
+    fError: Boolean;
+    fProgress: tfProgress;
+    fTotalFiles: Integer;
+    fCurrFile: Integer;
+    sCurrFile: String;
+    fFileName: String;
+    pLog: tBackupLog;
+    Owner: tForm;
+    Procedure AbZipper1ProcessItemFailure(Sender: TObject; item: TAbArchiveItem; ProcessType: TAbProcessType; ErrorClass: TAbErrorClass; ErrorCode: Integer);
+    Procedure abZipArchiveItemProgress(Sender: TObject; item: TAbArchiveItem; Progress: Byte; Var Abort: Boolean);
+    Procedure abZipArchiveProgress(Sender: TObject; Progress: Byte; Var Abort: Boolean);
+    Procedure AbZipper1ConfirmProcessItem(Sender: TObject; item: TAbArchiveItem; ProcessType: TAbProcessType; Var Confirm: Boolean);
+    Procedure AddFilesFromJson;
+    Procedure AddFiles(pEntry: ISuperObject);
+    Function GetFileName: String;
+    Procedure Popup(sTitle: String; sMessage: String);
+  public
+    lLog: tstrings;
+    pPopUps: tPopUpEvent;
+    Property Visible: Boolean read fVisible write fVisible;
+    Property FileName: String read GetFileName;
+    Constructor create(pOwner: tForm; jsConfig: String; eItemProgress: tItemProgress; eSaveProgress: tSaveProgress);
+    Function MakeZip: ISuperObject;
+  End;
+
+  tArchiveName = Class(TObject)
+  private
+    fCheckVersion: Boolean;
+  public
+    Property CheckVersion: Boolean read fCheckVersion write fCheckVersion;
+  End;
+
+Function SplitString(Chaine, sep: String): TStringlist;
+Function ExpandEnvVars(Const Str: String): String;
+Function GetGOProperties: ISuperObject;
+function _getVersion(_AppPath : String) : String;
+procedure GetBuildInfo(Exe : String;var V1, V2, V3, V4: Word);
+
+Implementation
+
+function _getVersion(_AppPath : String) : String;
+var
+   V1,
+   V2,
+   V3,
+   V4  : Word;
+begin
+   Result := '';
+   if fileexists(_apppath) then
+   begin
+      GetBuildinfo(_AppPath,V1,V2,V3,V4);
+      Result := Inttostr(V1)+'.'+Inttostr(V2)+'.'+Inttostr(V3)+'.'+inttostr(V4);
+   end;
+end;
+
+procedure GetBuildInfo(Exe : String;var V1, V2, V3, V4: Word);
+var
+  VerInfoSize: DWORD;
+  VerInfo: Pointer;
+  VerValueSize: DWORD;
+  VerValue: PVSFixedFileInfo;
+  Dummy: DWORD;
+begin
+  VerInfoSize := GetFileVersionInfoSize(PChar(exe), Dummy);
+  GetMem(VerInfo, VerInfoSize);
+  GetFileVersionInfo(PChar(exe), 0, VerInfoSize, VerInfo);
+  VerQueryValue(VerInfo, '\', Pointer(VerValue), VerValueSize);
+  with VerValue^ do begin
+    V1 := dwFileVersionMS shr 16;
+    V2 := dwFileVersionMS and $FFFF;
+    V3 := dwFileVersionLS shr 16;
+    V4 := dwFileVersionLS and $FFFF;
+  end;
+  FreeMem(VerInfo, VerInfoSize);
+end;
+
+Function GetGOProperties: ISuperObject;
+Var
+  lInfos            : tstrings;
+  sVersion          : String;
+Begin
+  result := SO;
+  lInfos := TStringlist.create;
+  lInfos.LoadFromFile(ExpandEnvVars('%programdata%') + LUSFile);
+  sVersion := lInfos[lInfos.Count - 1];
+  lInfos.Clear;
+  lInfos.Free;
+  lInfos := SplitString(sVersion, '_');
+  If (lInfos.Count = 2) Then
+  Begin
+    result.S['version'] := lInfos[1];
+    result.S['patch'] := 'NONE';
+  End
+  Else
+  Begin
+    result.S['version'] := lInfos[1];
+    result.S['patch'] := lInfos[2];
+  End;
+End;
+
+Function MakeArchiveName(bVersion: Boolean = false; Apb: String = '999999'; Version: String = '000'; Patch: String = '000'): String;
+(*
+  MakeTarName
+
+  Create the archive filename.
+
+  Parameters :
+
+  - bVersion : Boolean
+  If True, add the Greenock version and patch number and the APB number. (Default Value = False)
+  - APB      : String
+  APB Number of the pharmacy. (Default Value = '999999')
+  - Version  : String
+  Version Number of the Greenock Database. (Default Value = '000')
+  - Patch    : String
+  Patch Number of the Greenock Database. (Default Value = '000')
+
+  Returns :
+  A String containing the filename.
+
+*)
+Var
+  fName             : String;
+  sDate             : String;
+  //sVersion          : ISuperObject;
+Begin
+  sDate := FormatDateTime('YYYYMMDDHHNNSS', now);
+  //sVersion := GetGOProperties;
+  If bVersion Then
+    fName := format('%s_%s%s_%s', [sDate, Version, Patch, Apb])
+  Else
+    fName := format('%s', [sDate]);
+
+  result := fName;
+End;
+
+Function SplitString(Chaine, sep: String): TStringlist;
+Var
+  i                 : Integer;
+  temp              : String;
+Begin
+  result := TStringlist.create;
+  While trim(Chaine) <> '' Do
+  Begin
+    i := pos(sep, Chaine);
+    If i > 0 Then
+    Begin
+      temp := Copy(Chaine, 1, i - 1);
+      delete(Chaine, 1, i);
+    End
+    Else
+    Begin
+      temp := Chaine;
+      Chaine := '';
+    End;
+    result.add(temp);
+
+  End;
+  If trim(Chaine) <> '' Then
+    result.add(Chaine);
+
+End;
+
+Function ExpandEnvVars(Const Str: String): String;
+Var
+  BufSize           : Integer;          // size of expanded string
+Begin
+  // Get required buffer size
+  BufSize := ExpandEnvironmentStrings(
+    PChar(Str), Nil, 0);
+  If BufSize > 0 Then
+  Begin
+    // Read expanded string into result string
+    SetLength(result, BufSize - 1);
+    ExpandEnvironmentStrings(PChar(Str),
+      PChar(result), BufSize);
+  End
+  Else
+    // Trying to expand empty string
+    result := '';
+End;
+
+Function GetFileProperties(sFileName: String): pBackupFileProperties;
+Var
+  aBackupFileProperties: pBackupFileProperties;
+  SR                : TSearchRec;
+  iFound            : Integer;
+  sPath             : String;
+  lSplit            : tstrings;
+  sDate             : String;
+  sFile             : String;
+Begin
+  New(aBackupFileProperties);
+  aBackupFileProperties.bFileExist := false;
+  If fileexists(sFileName) Then
+  Begin
+    iFound := FindFirst(sFileName, faAnyFile, SR);
+    If iFound = 0 Then
+    Begin
+      aBackupFileProperties.bFileExist := True;
+      sFile := tPath.GetFileNameWithoutExtension(sFileName);
+      //sFile := tPath.GetFileNameWithoutExtension(sFile);
+      lSplit := SplitString(sFile, '_');
+      If lSplit.Count > 1 Then
+      Begin
+        aBackupFileProperties.APBNr := lSplit[2];
+        aBackupFileProperties.VersionNr := lSplit[1];
+        sDate := Copy(lSplit[0], 1, 14);
+        aBackupFileProperties.NameDateTime := EncodeDateTime(StrToInt(Copy(sDate, 1, 4)), StrToInt(Copy(sDate, 5, 2)), StrToInt(Copy(sDate, 7, 2)),
+          StrToInt(Copy(sDate, 9, 2)), StrToInt(Copy(sDate, 11, 2)), 0, 0);
+      End
+      Else
+      Begin
+        sDate := Copy(sFile, 1, 14);
+        aBackupFileProperties.NameDateTime := EncodeDateTime(StrToInt(Copy(sDate, 1, 4)), StrToInt(Copy(sDate, 5, 2)), StrToInt(Copy(sDate, 7, 2)),
+          StrToInt(Copy(sDate, 9, 2)), StrToInt(Copy(sDate, 11, 2)), 0, 0);
+      End;
+      aBackupFileProperties.fileDateTime := SR.TimeStamp;
+    End;
+    System.SysUtils.FindClose(SR);
+  End;
+  result := aBackupFileProperties;
+End;
+
+Procedure ApplyRotation(sPath: String; iMaxFiles: Integer = 3; iNBJours: Integer = 7);
+Var
+  lFiles            : tstrings;
+  SR                : TSearchRec;
+  iFound            : Integer;
+  sFileName         : String;
+  sDate             : String;
+  i                 : Integer;
+  BackupFileProperties: pBackupFileProperties;
+  DefaultDir, MainLogDir: String;
+  LogFileName       : String;
+Begin
+  lFiles := TStringlist.create;
+  iFound := FindFirst(IncludeTrailingPathDelimiter(sPath) + '*.cor', faAnyFile, SR);
+  DefaultDir := IncludeTrailingPathDelimiter(ExtractFileDir(PAramstr(0)));
+  MainLogDir := IncludeTrailingPathDelimiter(sPath);
+
+  While iFound = 0 Do
+  Begin
+    If (SR.Name <> '.') And (SR.Name <> '..') Then
+      lFiles.add(IncludeTrailingPathDelimiter(sPath) + SR.Name);
+    iFound := FindNext(SR);
+  End;
+  System.SysUtils.FindClose(SR);
+
+  While lFiles.Count >= iMaxFiles Do
+  Begin
+    LogFileName := tPath.GetFileNameWithoutExtension(lFiles[0]);
+    If fileexists(MainLogDir + LogFileName + '.log') Then
+      Deletefile(PChar(MainLogDir + LogFileName + '.log'));
+
+    Deletefile(PChar(lFiles[0]));
+    lFiles.delete(0);
+  End;
+
+  If lFiles.Count > 1 Then
+  Begin
+    i := 1;
+    While i <= lFiles.Count - 1 Do
+    Begin
+      BackupFileProperties := GetFileProperties(lFiles[i]);
+      If DaysBetween(BackupFileProperties.fileDateTime, now) > iNBJours Then
+      Begin
+        Deletefile(PChar(lFiles[i]));
+      End;
+      inc(i);
+    End;
+  End;
+
+  lFiles.Free;
+End;
+
+Function tToCompress.GetFileName: String;
+Var
+  sApb              : String;
+  pGreenockInfos    : tGreenockInfos;
+  pInfos            : ISuperObject;
+Begin
+  sApb := '';
+  If Config.B['version'] Then
+  Begin
+    pGreenockInfos := tGreenockInfos.create(Config.S['server']);
+    sApb := pGreenockInfos.Apb;
+    pInfos := pGreenockInfos.GetInfos(sApb);
+    pLog.jsLog.S['version'] := pGreenockInfos.Version;
+    pLog.jsLog.S['patch'] := pGreenockInfos.Patch;
+    pLog.jsLog.S['apb'] := sApb;
+    pLog.jsLog.S['pharma'] := pInfos.S['ActorName'];
+    pLog.jsLog.S['group'] := pInfos.S['GroupType'];
+    result := MakeArchiveName(Config.B['version'], sApb, pGreenockInfos.Version, pGreenockInfos.Patch);
+    pGreenockInfos.Close;
+    pGreenockInfos.Free;
+  End
+  Else
+  Begin
+    result := MakeArchiveName(Config.B['version']);
+  End;
+  pLog.setApb(sApb);
+
+End;
+
+Function sDate(pDate: tDateTime): String;
+Begin
+  result := FormatDateTime('yyyy-mm-dd hh:nn:ss.zzz', pDate);
+End;
+
+Function tBackupLog.GetErrors: Integer;
+Begin
+  result := jsLog.A['Errors'].Length;
+End;
+
+Procedure tBackupLog.SetDateStop(pDate: String);
+Begin
+  jsLog.S['datestop'] := pDate;
+End;
+
+Function tBackupLog.GetDateStop: String;
+Begin
+  result := jsLog.S['datestop'];
+End;
+
+Procedure tBackupLog.setApb(Value: String);
+Begin
+  jsLog.S['apb'] := Value;
+End;
+
+Function tBackupLog.GetApb: String;
+Begin
+  result := jsLog.S['apb'];
+End;
+
+Procedure tBackupLog.GetLog(pLines: tstrings; bClear: Boolean);
+Begin
+  If bClear Then
+    pLines.Clear;
+  pLines.text := pLines.text + (jsLog.AsJSON(True));
+End;
+
+Procedure tBackupLog.AddError(pFile: String; pMessage: String; iCode: Integer);
+Var
+  pObj              : ISuperObject;
+Begin
+  pObj := SO;
+  pObj.S['tag'] := sDate(now);
+  pObj.S['file'] := UTF8ToString(pFile);
+  pObj.S['message'] := UTF8ToString(pMessage);
+  pObj.i['code'] := iCode;
+  jsLog.A['Errors'].add(pObj);
+
+End;
+
+Procedure tBackupLog.AddEntry(pMessage: String);
+Var
+  pObj              : ISuperObject;
+Begin
+  pObj := SO;
+  pObj.S['tag'] := sDate(now);
+  pObj.S['name'] := UTF8ToString(pMessage);
+  jsLog.A['entries'].add(pObj);
+End;
+
+Constructor tBackupLog.create(pApb: String);
+Begin
+  jsLog := SO;
+  jsLog.S['apb'] := pApb;
+  jsLog.S['datestart'] := sDate(now);
+  jsLog.S['datestop'] := '';
+  jsLog.i['result'] := 0;
+  jsLog.S['cscversion'] := _getVersion(Paramstr(0));
+
+  sPath := IncludeTrailingBackslash(tPath.GetDirectoryName(PAramstr(0)));
+  If Not DirectoryExists(sPath + 'Logs') Then
+    ForceDirectories(sPath + 'Logs');
+
+  sPath := IncludeTrailingBackslash(sPath + 'Logs');
+End;
+
+Constructor tToCompress.create(pOwner: tForm; jsConfig: String; eItemProgress: tItemProgress; eSaveProgress: tSaveProgress);
+Begin
+  Inherited create;
+
+  fError := false;
+  pLog := tBackupLog.create;
+
+  abZip := TAbZipKit.create(Owner);
+
+  abZip.AutoSave := false;
+
+  Config := tSuperObject.ParseFile(jsConfig);
+  Visible := Config.B['visible'];
+  fLog := Config.B['generatelog'];
+  fFileName := FileName;
+  If DirectoryExists(Config.S['destination']) Then
+  Begin
+    abZip.FileName := Config.S['destination'] + fFileName + '.zip';
+    If assigned(eItemProgress) Then
+    Begin
+      fOnItemProgress := eItemProgress;
+    End;
+
+    abZip.OnConfirmProcessItem := Self.AbZipper1ConfirmProcessItem;
+    abZip.OnArchiveItemProgress := Self.abZipArchiveItemProgress;
+
+    If assigned(eSaveProgress) Then
+    Begin
+      fOnSaveProgress := eSaveProgress;
+    End;
+
+    abZip.OnArchiveSaveProgress := Self.abZipArchiveProgress;
+    abZip.OnProcessItemFailure := Self.AbZipper1ProcessItemFailure;
+    Try
+      abZip.DeflationOption :=
+        TAbZipDeflationOption(Config.i['compressionlevel']);
+    Except
+      abZip.DeflationOption := doNormal;
+    End;
+
+    AddFilesFromJson;
+  End
+  Else
+  Begin
+    pLog.AddError('Destination does not exists', 'Error', -1);
+    fError := True;
+  End;
+End;
+
+Procedure tToCompress.Popup(sTitle: String; sMessage: String);
+Begin
+  If Config.B['popups'] Then
+    pPopUps('CSCBackup', 'Start');
+End;
+
+Procedure tToCompress.AddFiles(pEntry: ISuperObject);
+Var
+  SR                : TSearchRec;
+  iFound            : Integer;
+  sPath             : String;
+  anEntry           : ISuperObject;
+Begin
+  Case pEntry.i['type'] Of
+    0:
+      Begin
+        sPath := IncludeTrailingPathDelimiter(tPath.GetFullPath(pEntry.S['name']));
+        If DirectoryExists(sPath) Then
+        Begin
+          iFound := FindFirst(sPath + '*.*', faAnyFile, SR);
+          While iFound = 0 Do
+          Begin
+            If (SR.Name <> '.') And (SR.Name <> '..') Then
+            Begin
+              If (SR.Attr And faDirectory) = faDirectory Then
+              Begin
+                If pEntry.i['recurs'] = 1 Then
+                Begin
+                  pEntry.S['name'] := sPath + SR.Name;
+                  AddFiles(pEntry);
+                End;
+              End
+              Else
+                abZip.AddFiles(sPath + SR.Name, faAnyFile);
+            End;
+            iFound := FindNext(SR);
+          End;
+        End
+        Else
+          pLog.AddError(sPath, 'Directory not found', -1);
+      End;
+    1:
+      Begin
+        If fileexists(pEntry.S['name']) Then
+        Begin
+          abZip.AddFiles(pEntry.S['name'], faAnyFile);
+        End
+        Else
+        Begin
+          pLog.AddError(pEntry.S['name'], 'File not found', -1);
+        End;
+      End;
+  End;
+
+End;
+
+Procedure tToCompress.AddFilesFromJson;
+Var
+  i                 : Integer;
+  pItem             : TAbArchiveItem;
+  bDirectory        : Boolean;
+  bError            : Boolean;
+  anEntry           : ISuperObject;
+Begin
+  i := 0;
+  While i <= Config.A['entries'].Length - 1 Do
+  Begin
+    anEntry := Config.A['entries'].O[i].AsObject;
+    AddFiles(anEntry);
+    inc(i);
+  End;
+End;
+
+Procedure tToCompress.AbZipper1ConfirmProcessItem(Sender: TObject; item: TAbArchiveItem; ProcessType: TAbProcessType; Var Confirm: Boolean);
+Begin
+
+End;
+
+Procedure tToCompress.abZipArchiveItemProgress(Sender: TObject; item: TAbArchiveItem; Progress: Byte; Var Abort: Boolean);
+Begin
+  If assigned(fOnItemProgress) Then
+    fOnItemProgress(item, Progress, 100);
+
+  If sCurrFile <> item.FileName Then
+  Begin
+    sCurrFile := item.FileName;
+    pLog.AddEntry(item.FileName);
+  End;
+
+  If fVisible Then
+  Begin
+
+    fProgress.lFileNum.Caption := fCurrFile.ToString + ' / ' + fTotalFiles.ToString;
+    fProgress.lFileName.Caption := item.FileName;
+
+    //If Progress Mod 5 = 0 Then
+    //Begin
+    fProgress.pbItemProgress.Position := Progress;
+    fProgress.Process;
+    //End;
+  End;
+
+End;
+
+Procedure tToCompress.AbZipper1ProcessItemFailure(Sender: TObject; item: TAbArchiveItem; ProcessType: TAbProcessType; ErrorClass: TAbErrorClass; ErrorCode: Integer);
+Var
+  sError            : String;
+Begin
+  Case Integer(ErrorClass) Of
+    Integer(ecAbbrevia): sError := AbStrRes(ErrorCode);
+    Integer(ecInOutError): sError := 'I/O Error';
+    Integer(ecFilerError): sError := 'Filer Error';
+    Integer(ecFileCreateError): sError := 'File Create Error';
+    Integer(ecFileOpenError): sError := 'File Open Error';
+    Integer(ecCabError): sError := 'Cab Error';
+    Integer(ecOther): sError := 'Other';
+  End;
+  pLog.AddError(item.FileName, sError, ErrorCode);
+End;
+
+Procedure tToCompress.abZipArchiveProgress(Sender: TObject; Progress: Byte; Var Abort: Boolean);
+Begin
+  If assigned(fOnSaveProgress) Then
+    fOnSaveProgress(Progress, 100);
+
+  If fVisible Then
+  Begin
+    fProgress.pbArchive.Position := Progress;
+    inc(fCurrFile);
+    fProgress.Process;
+  End;
+End;
+
+Function tToCompress.MakeZip: ISuperObject;
+Var
+  pLogUpLoad        : tLogUpLoad;
+  i                 : Integer;
+  anItem            : TAbArchiveItem;
+  anEntry           : ISuperObject;
+  aResult           : ISuperObject;
+  bClose            : Boolean;
+
+  Function GetEntry(sFileName: String): ISuperObject;
+  Var
+    i               : Integer;
+    anEntry         : ISuperObject;
+  Begin
+    i := 0;
+    While i <= pLog.jsLog.A['entries'].Length - 1 Do
+    Begin
+      anEntry := pLog.jsLog.A['entries'].O[i].AsObject;
+      If anEntry.S['name'] = sFileName Then
+      Begin
+        result := pLog.jsLog.A['entries'].O[i];
+        i := pLog.jsLog.A['entries'].Length;
+      End;
+      inc(i);
+    End;
+  End;
+Begin
+  fTotalFiles := abZip.Count;
+  fCurrFile := 1;
+  sCurrFile := '';
+  if Config.B['popups'] then
+     Popup('CSCBackup', 'Start');
+
+  If fVisible Then
+  Begin
+    fProgress := tfProgress.create(Nil);
+    fProgress.Show;
+  End;
+
+  Try
+    abZip.Save;
+    i := 0;
+    While i <= abZip.Count - 1 Do
+    Begin
+      anItem := abZip.Items[i];
+      anEntry := GetEntry(anItem.FileName);
+      anEntry.i['uncompressed'] := anItem.UncompressedSize;
+      anEntry.i['compressed'] := anItem.CompressedSize;
+      inc(i);
+    End;
+    abZip.CloseArchive;
+    // Verifying archive status.
+    bClose := False;
+    while not bClose do
+    begin
+       bClose := (abZip.Status <> TAbArchiveStatus.asBusy);
+       if abZip.Status = asInvalid then
+          pLog.AddError('', 'Archive Invalid', -1);
+  End;
+    end;
+
+  Except
+    On e: Exception Do
+      pLog.AddError('', e.Message, -1);
+  End;
+  pLog.SetDateStop(sDate(now));
+  if Config.B['popups'] then
+    Popup('CSCBackup', 'End');
+
+  ApplyRotation(Config.S['destination'], Config.i['nbmax'], Config.i['agemax']);
+
+  If Not renamefile(Config.S['destination'] + fFileName + '.zip', Config.S['destination'] + fFileName + '.cor') Then
+  Begin
+    pLog.AddError(Config.S['destination'] + fFileName + '.zip', 'Cannot rename file', -1);
+  End;
+
+  result := SO;
+  result.i['result'] := 0;
+  result.i['errors'] := pLog.Errors;
+
+  //If pLog.jsLog.A['Errors'].Length > 0 Then
+  //  result.i['result'] := 1;
+
+  If (pLog.jsLog.A['Errors'].Length > 0) Then
+  Begin
+    If (pLog.jsLog.A['Errors'].Length <= pLog.jsLog.A['entries'].Length) Then
+      result.i['result'] := 1
+    Else
+      result.i['result'] := 2;
+  End;
+
+  result.S['archivename'] := Config.S['destination'] + fFileName + '.cor';
+  pLog.jsLog.O['results'] := result;
+  pLog.jsLog.A['rules'] := Config.A['rules'];
+
+  pLogUpLoad := tLogUpLoad.create(Config.S['proxyserver'], Config.i['proxyport']);
+  pLogUpLoad.url := 'http://backup.sherpagreenock.be/test.php';
+  aResult := pLogUpLoad.upload(pLog.jsLog.AsJSON);
+
+  pLog.jsLog.A['upload'].O[0] := aResult;
+
+  If fLog Then
+  Begin
+    lLog := TStringlist.create;
+    pLog.GetLog(lLog, True);
+    lLog.SaveToFile(pLog.sPath + fFileName + '.log');
+    lLog.SaveToFile(Config.S['destination'] + fFileName + '.log');
+    lLog.Free;
+  End;
+
+  If fVisible Then
+    fProgress.Free;
+End;
+
+Function GetSizeLabel(iSize: cardinal): String;
+Const
+  K                 = Int64(1024);
+  M                 = K * K;
+  G                 = K * M;
+  T                 = K * G;
+Begin
+  // test
+
+  If iSize < K Then
+    result := 'bytes'
+  Else If iSize < M Then
+    result := 'Ko'
+  Else If iSize < G Then
+    result := 'Mo'
+  Else If iSize < T Then
+    result := 'Go'
+  Else
+    result := 'To';
+
+End;
+
+Function GetSize(iSize: cardinal): Extended;
+Const
+  K                 = Int64(1024);
+  M                 = K * K;
+  G                 = K * M;
+  T                 = K * G;
+Begin
+
+  If iSize < K Then
+    result := iSize
+  Else If iSize < M Then
+    result := iSize / K
+  Else If iSize < G Then
+    result := iSize / M
+  Else If iSize < T Then
+    result := iSize / G
+  Else
+    result := iSize / T;
+
+End;
+
+End.
+

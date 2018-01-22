@@ -1,0 +1,1157 @@
+Unit uMain;
+
+Interface
+
+Uses
+  Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, System.regularexpressions, Vcl.Graphics,
+  Vcl.Controls, Vcl.Forms, Vcl.Dialogs, uLib, System.IOUtils, Vcl.StdCtrls, AbBase, AbBrowse, AbZBrows, AbZipper, AbZipKit, phtoolsStr, inifiles,
+  uRecords, Vcl.ExtCtrls, jclStrings, ShellAPI, IdComponent, IdTCPConnection, IdTCPClient, IdBaseComponent, IdMessage, Vcl.Grids, AbView,
+  AbZView, tlHelp32, IdExplicitTLSClientServerBase, IdFTP, IdFTPCommon, Dateutils, uversion, XSuperObject, XML.verysimple;
+
+Const
+  GOAPBCmd          = '@"C:\Program Files\Corilus\Greenock\GreenockMaintenanceDB.exe" /APB > "%sAPB.TXT"';
+{$IFDEF DEBUG}
+  LogUploadUrl      = 'http://localhost:8080/Dash/SaveUpdSession.php';
+{$ELSE}
+  LogUploadUrl      = 'http://backup.sherpagreenock.be/SaveUpdSession.php';
+{$ENDIF}
+  GreenockMaintenance = 'GOAPB.cmd';
+
+Type
+  TfUpdBAckup = Class(TForm)
+    Extract: TButton;
+    ZipKit: TAbZipKit;
+    lCmd: TLabel;
+    Button3: TButton;
+    Button1: TButton;
+    lb1: TMemo;
+    ZipView1: TAbZipView;
+    ftp: TIdFTP;
+    Button2: TButton;
+    Procedure ExtractClick(Sender: TObject);
+    Procedure lb1MouseUp(Sender: TObject; Button: TMouseButton; Shift: TShiftState; X, Y: Integer);
+    Procedure FormCreate(Sender: TObject);
+  private
+    { Déclarations privées }
+    iTypeOld : Integer = 0;
+    lBatch: tStrings;
+    lBat: tStrings;
+    lNewBat: tStrings;
+    lSet: tStrings;
+    bAuto: Boolean;
+    pUpdObj: tUpdObj;
+    Function GetGOAPB : String;
+    Procedure AddLog(sString: String);
+    Procedure CopyFilesZip;
+    Procedure ExtractZip;
+    Procedure RenameFolder;
+    Procedure FindBat;
+    Procedure FindSet;
+    Procedure FindXML;
+    Procedure LoadBat(sFileName: String);
+    Function LoadSet(sFileName: String): tSet;
+    Procedure ConvertBat;
+    Procedure ConvertBatches;
+    Procedure ConvertSets;
+    Procedure ConvertXML;
+    Function ConvertCmdLine(iTypeExt : Integer = 0;sOldCmd: String): String;
+    Procedure SaveXML(sFileName: String; aSet: tSet);
+    Procedure SaveSet(sFileName: String; aSet: tSet);
+    Procedure XML2Set(sXMLName: String; sSetName: String); // aSet: tSet);
+    Function MakeaFileEntryRecord(sEntry: String): tFileEntryRecord;
+    Function KillProcess: Boolean;
+    Procedure send2FTP(sFile: String);
+    Procedure StartUpdate;
+    Procedure InitLog;
+  public
+    { Déclarations publiques }
+    sLog: ISuperObject;
+  End;
+
+Var
+  fUpdBAckup        : TfUpdBAckup;
+
+Implementation
+
+{$R *.dfm}
+
+Procedure TfUpdBAckup.InitLog;
+Begin
+  sLog := SO;
+  sLog.S['apb'] := '';
+  sLog.S['pharmacyname'] := '';
+  sLog.S['dateupdate'] := '';
+  sLog.S['updbackup'] := '';
+  sLog.S['cscversionbefore'] := '';
+  sLog.S['cscversionafter'] := '';
+  sLog.I['result'] := 0;
+  sLog.A['entries'] := SA;
+End;
+
+(*
+Function TfUpdBAckup.GetGOAPB: String;
+var
+  sAPB: String;
+  SEInfo: TShellExecuteInfo;
+  ExitCode: DWord;
+  ExecuteFile, ParamString, StartInString: string;
+  f: TextFile;
+  APBFile: String;
+  Buffer: String;
+  match: tMatch;
+begin
+  sAPB := '';
+  ParamString := '';
+  StartInString := Addslash(ExtractFileDir(Paramstr(0)));
+  Fillchar(SEInfo, Sizeof(SEInfo), chr(0));
+
+  SEInfo.cbSize := Sizeof(SEInfo);
+  With SEInfo do
+  begin
+    fMask := SEE_MASK_NOCLOSEPROCESS;
+    Wnd := 0; //Application.Handle;
+    lpFile := pWideChar(Addslash(ExtractFileDir(Paramstr(0))) + GreenockMaintenance);
+    lpVerb := 'open';
+    lpParameters := ''; //Nil;//pWidechar(ParamString);
+    lpDirectory := pWidechar(StartInString);
+    //nShow := SW_HIDE;
+    nShow := SW_SHOWNORMAL;
+  end;
+*)
+
+Procedure TfUpdBAckup.AddLog(sString: String);
+Var
+  I                 : Integer;
+  sTag              : String;
+  sType             : Integer;
+  anEntry           : ISuperObject;
+Begin
+  sTag := formatdatetime('hh:nn:ss.zzz', Now);
+  I := lb1.Lines.Add(Format('[%s] %s', [sTag, sString]));
+  pUpdObj.AddLog(sString);
+
+  anEntry := SO;
+  anEntry.S['tag'] := sTag;
+  anEntry.S['line'] := sString;
+  anEntry.I['type'] := 0;
+  sLog.A['entries'].Add(anEntry);
+End;
+
+Function TfUpdBAckup.KillProcess: Boolean;
+Var
+  Snapshot          : THandle;
+  pe                : TProcessEntry32;
+  iRes              : Integer;
+  sProcessName      : String;
+
+  Function KillTask(ExeFileName: String): Integer;
+  Const
+    PROCESS_TERMINATE = $0001;
+  Var
+    ContinueLoop    : BOOL;
+    FSnapshotHandle : THandle;
+    FProcessEntry32 : TProcessEntry32;
+  Begin
+    Result := 0;
+    FSnapshotHandle := CreateToolhelp32Snapshot(TH32CS_SNAPPROCESS, 0);
+    FProcessEntry32.dwSize := SizeOf(FProcessEntry32);
+    ContinueLoop := Process32First(FSnapshotHandle, FProcessEntry32);
+
+    While Integer(ContinueLoop) <> 0 Do
+    Begin
+      If ((UpperCase(ExtractFileName(FProcessEntry32.szExeFile)) = UpperCase(ExeFileName)) Or
+        (UpperCase(FProcessEntry32.szExeFile) = UpperCase(ExeFileName))) Then
+        Result := Integer(TerminateProcess(OpenProcess(PROCESS_TERMINATE, BOOL(0), FProcessEntry32.th32ProcessID), 0));
+      ContinueLoop := Process32Next(FSnapshotHandle, FProcessEntry32);
+    End;
+    CloseHandle(FSnapshotHandle);
+  End;
+
+  Function isProcessAlive(ExeFileName: String): Boolean; overload;
+  Begin
+    Result := False;
+    Snapshot := CreateToolhelp32Snapshot(TH32CS_SNAPALL, 0);
+    Try
+      pe.dwSize := SizeOf(pe);
+      If Process32First(Snapshot, pe) Then
+        While Process32Next(Snapshot, pe) Do
+        Begin
+          If UpperCase(pe.szExeFile) = UpperCase(ExeFileName) Then
+          Begin
+            Result := True;
+            exit;
+          End;
+
+        End;
+    Finally
+      CloseHandle(Snapshot);
+    End;
+  End;
+
+  Function isProcessAlive(ExeFileName: String; iTimeout: Int64): Boolean; overload;
+  Var
+    iStart          : tDateTime;
+  Begin
+    iStart := Now;
+    Result := True;
+    While (MilliSecondsBetween(Now, iStart) < iTimeout) And Result Do
+    Begin
+      If Not isProcessAlive(sProcessName) Then
+      Begin
+        Result := False;
+      End;
+    End;
+  End;
+
+Begin
+  Result := True;
+  sProcessName := 'OPSWBACKUP.EXE';
+  If isProcessAlive(sProcessName) Then
+  Begin
+    AddLog(Format('Process %s is running', [sProcessName]));
+    AddLog('  Trying to kill ......');
+    KillTask(sProcessName);
+    If Not isProcessAlive(sProcessName, 15000) Then
+      AddLog(Format('  Process %s killed successfully', [sProcessName]))
+    Else
+    Begin
+      AddLog(Format('  Failed to kill %s process', [sProcessName]));
+      Result := False;
+    End;
+  End
+  Else
+    AddLog(Format('Process %s is not running', [sProcessName]));
+
+  If Result Then
+  Begin
+    sProcessName := 'CSCBACKUPXE.EXE';
+    If isProcessAlive(sProcessName) Then
+    Begin
+      AddLog(Format('Process %s is running', [sProcessName]));
+      AddLog('  Trying to kill ......');
+      KillTask(sProcessName);
+      If Not isProcessAlive(sProcessName, 15000) Then
+        AddLog(Format('  Process %s killed successfully', [sProcessName]))
+      Else
+      Begin
+        AddLog(Format('  Failed to kill %s process', [sProcessName]));
+        Result := False;
+      End;
+    End
+    Else
+      AddLog(Format('Process %s is not running', [sProcessName]));
+  End;
+End;
+
+Procedure TfUpdBAckup.ExtractClick(Sender: TObject);
+Var
+  sAPB              : String;
+  bUpdate           : Boolean;
+  pLogUpLoad        : tLogUpLoad;
+  aFile             : TextFile;
+  xAPBFile          : ISuperObject;
+  lAPB              : tStrings;
+Begin
+  lb1.Lines.Clear;
+  bUpdate := True;
+
+  If Not directoryexists(OPSWBackupPath) Then
+  Begin
+    System.IOUtils.TDirectory.CreateDirectory(OPSWBackupPath);
+    AddLog('Creating Main Folder ' + OPSWBackupPath);
+    bUpdate := False;
+  End;
+
+  If Not directoryexists(TempPath) Then
+  Begin
+    System.IOUtils.TDirectory.CreateDirectory(TempPath);
+    AddLog('Creating Temporary Folder ' + TempPath);
+  End;
+
+  If Not directoryexists(UndoPath) Then
+  Begin
+    System.IOUtils.TDirectory.CreateDirectory(UndoPath);
+    AddLog('Creating Undo Folder ' + UndoPath);
+  End;
+
+  If FileExists(UndoPath + 'Old.zip') Then
+    deletefile(UndoPath + 'Old.zip');
+
+  ZipKit.FileName := UndoPath + 'Old.zip';
+  ZipKit.AddFilesEx(OPSWBackupPath + '*.*', '', faAnyFile);
+  ZipKit.Save;
+  ZipKit.CloseArchive;
+
+  AddLog('Undo file generated at [' + UndoPath + 'Old.zip]');
+  sAPB := GetGOAPB;
+  xAPBFile := SO;
+  xAPBFile.S['APB'] := sAPB;
+  lAPB := tStringList.Create;
+  lAPB.Text := xAPBFile.AsJSON(true);
+  lAPB.SaveToFile(OPSWBackupPath+'APB.JSON');
+  lAPB.Free;
+  pUpdObj.apb := sAPB;
+  sLog.S['apb'] := sAPB;
+  If KillProcess Then
+  Begin
+    ExtractZip;
+    If FileExists(OPSWBackupPath + OPSWBackupCmd) Then
+    Begin
+      RenameFolder;
+      FindBat;
+      ConvertBatches;
+      FindSet;
+      ConvertSets;
+    End;
+
+    If FileExists(OPSWBackupPath + CSCBackupXECmd) Then
+    Begin
+      // Convert XML to JSON
+      FindXML;
+      ConvertXML;
+      pUpdObj.cscversion_before := _getVersion(OPSWBackupPath + CSCBackupXECmd);
+      sLog.S['cscversionbefore'] := pUpdObj.cscversion_before;
+    End
+    Else
+    Begin
+      sLog.S['cscversionbefore'] := 'None';
+    End;
+
+    CopyFilesZip;
+
+    If FileExists(OPSWBackupPath + CSCBackupXECmd) Then
+    Begin
+      pUpdObj.cscversion_After := _getVersion(OPSWBackupPath + CSCBackupXECmd);
+      sLog.S['cscversionafter'] := pUpdObj.cscversion_After;
+    End;
+    AddLog('** Update successefully terminated **');
+  End
+  Else
+  Begin
+    pUpdObj.iresult := 1;
+    sLog.I['result'] := 1;
+    AddLog('** ERROR ** Process is running and can''t be kill by update procedure');
+  End;
+
+  //lb1.Lines.SaveToFile(OPSWBackupPath + sAPB + '.log');
+  AssignFile(aFile, OPSWBackupPath + sAPB + '.log');
+  Rewrite(aFile);
+  Writeln(aFile, sLog.AsJSON(True));
+  CloseFile(aFile);
+  send2FTP(OPSWBackupPath + sAPB + '.log');
+
+  pLogUpLoad := tLogUpLoad.create;
+  pLogUpLoad.url := LogUploadUrl;
+  //pLogUpLoad.upload(pUpdObj.toJSON);
+  pLogUpLoad.upload(sLog.AsJSON(True));
+  FreeAndNil(pUpdObj);
+End;
+
+Procedure TfUpdBAckup.send2FTP(sFile: String);
+Var
+  strDirectory      : String;
+Begin
+  Try
+    ftp.Host := FTP_Site;
+    ftp.Passive := True;
+    ftp.Username := FTP_User;
+    ftp.Password := FTP_Pswd;
+    ftp.ConnectTimeout := 2000;
+    ftp.Connect();
+    ftp.TransferType := ftBinary;
+    ftp.BeginWork(wmWrite);
+    ftp.ChangeDir('/CSCBackupXE_UPD/');
+    ftp.Put(sFile);
+    ftp.Disconnect();
+  Except
+    On e: exception Do
+    Begin
+      AddLog('** Error ** ' + e.Message);
+      lb1.Lines.SaveToFile(sFile);
+    End;
+  End;
+End;
+
+Procedure TfUpdBAckup.CopyFilesZip;
+Var
+  SR                : tSearchRec;
+  Found             : Integer;
+Begin
+  Found := FindFirst(TempPath + '*.*', faAnyFile, SR);
+  While Found = 0 Do
+  Begin
+    If ((SR.Name <> '.') And (SR.Name <> '..')) Then
+    Begin
+      Copyfile(pChar(TempPath + SR.Name), pChar(OPSWBackupPath + SR.Name), False);
+      AddLog(TempPath + SR.Name + ' ==> ' + OPSWBackupPath + SR.Name);
+    End;
+    Found := FindNext(SR);
+  End;
+  FindClose(SR);
+End;
+
+Procedure TfUpdBAckup.RenameFolder;
+Begin
+  If directoryexists(OPSWBackupPath) Then
+  Begin
+    AddLog('Directory [' + OPSWBackupPath + '] found.  Renaming to [' + OPSWBackupPathOld + ']');
+    System.IOUtils.TDirectory.Move(OPSWBackupPath, OPSWBackupPathOld);
+    AddLog('Creating new directory [' + OPSWBackupPath + ']');
+    System.IOUtils.TDirectory.CreateDirectory(OPSWBackupPath);
+  End;
+End;
+
+Function TfUpdBAckup.ConvertCmdLine(iTypeExt : Integer; sOldCmd: String): String;
+Var
+  sNewCmd           : String;
+  iExt              : Integer;
+  iBackSlash        : Integer;
+  lTemp             : tStrings;
+  sSet              : String;
+Begin
+  iExt := pos('.SET', UpperCase(sOldCmd));
+  Delete(sOldCmd, iExt, (Length(sOldCmd) - iExt) + 1);
+  lTemp := Splitstring(sOldCmd, '\');
+  sSet := lTemp[lTemp.Count - 1];
+  sNewCmd := Format(CmdLine, [sSet]);
+  AddLog('         Converting "' + sOldCmd + '.set" to "' + sNewCmd + '"');
+  Result := sNewCmd;
+End;
+
+Procedure TfUpdBAckup.FindSet;
+Var
+  SR                : tSearchRec;
+  Found             : Integer;
+Begin
+  FreeAndNil(lSet);
+  lSet := tStringList.create;
+  AddLog('Start searching for .set files in [' + OPSWBackupPathOld + ']');
+  Found := FindFirst(OPSWBackupPathOld + '*.set', faAnyFile, SR);
+  While Found = 0 Do
+  Begin
+    lSet.Add(OPSWBackupPathOld + SR.Name);
+    AddLog('File [' + OPSWBackupPathOld + SR.Name + '] found');
+    Found := FindNext(SR);
+  End;
+  FindClose(SR);
+End;
+
+Procedure TfUpdBAckup.FindXML;
+Var
+  SR                : tSearchRec;
+  Found             : Integer;
+Begin
+  FreeAndNil(lSet);
+  lSet := tStringList.create;
+  AddLog('Start searching for .set files in [' + OPSWBackupPath + ']');
+  Found := FindFirst(OPSWBackupPath + '*.XML', faAnyFile, SR);
+  While Found = 0 Do
+  Begin
+    lSet.Add(OPSWBackupPathOld + SR.Name);
+    AddLog('File [' + OPSWBackupPath + SR.Name + '] found');
+    Found := FindNext(SR);
+  End;
+  FindClose(SR);
+End;
+
+Procedure TfUpdBAckup.StartUpdate;
+Begin
+
+{$IFDEF DEBUG}
+  lb1.Visible := True;
+  Show;
+{$ELSE}
+  If bAuto Then
+  Begin
+    Self.Hide;
+    Try
+      Try
+        ExtractClick(Nil);
+      Except
+        halt(1);
+      End;
+    Finally
+      Application.Terminate;
+    End;
+
+  End
+  Else
+    Show;
+{$ENDIF}
+End;
+
+Procedure TfUpdBAckup.FormCreate(Sender: TObject);
+Var
+  iPos              : Integer;
+  sParam            : String;
+  iParam            : Integer;
+  sTemp             : String;
+  lsTemp            : tStrings;
+Begin
+  bAuto := True;
+  If paramcount > 0 Then
+  Begin
+    iParam := 1;
+    While iParam <= paramcount Do
+    Begin
+      sParam := Paramstr(iParam);
+      sParam := strRemoveChars(sParam, [#39]);
+
+      iPos := pos('/PATH', UpperCase(sParam));
+      If iPos <> 0 Then
+      Begin
+        iPos := pos('=', sParam);
+        If iPos <> 0 Then
+        Begin
+          OPSWBackupPath := Copy(sParam, iPos + 1, Length(sParam) - iPos);
+          If OPSWBackupPath[Length(OPSWBackupPath)] = '\' Then
+            Delete(OPSWBackupPath, Length(OPSWBackupPath), 1);
+          OPSWBackupPathOld := Addslash(OPSWBackupPath + '_OLD');
+          OPSWBackupPath := Addslash(OPSWBackupPath);
+        End;
+      End;
+
+      iPos := pos('/FTP', UpperCase(sParam));
+      If iPos <> 0 Then
+      Begin
+        sTemp := sParam;
+        lsTemp := Splitstring(sParam, '@');
+        If lsTemp.Count > 1 Then
+        Begin
+          FTP_Site := lsTemp[1];
+          sTemp := lsTemp[0];
+          FreeAndNil(lsTemp);
+          lsTemp := Splitstring(sTemp, '|');
+          If lsTemp.Count > 1 Then
+          Begin
+            FTP_User := lsTemp[0];
+            Delete(FTP_User, 1, 5);
+            FTP_Pswd := lsTemp[1];
+          End;
+
+        End;
+      End;
+
+      iPos := pos('/INTERACTIVE', UpperCase(sParam));
+      If iPos <> 0 Then
+      Begin
+        bAuto := False;
+      End;
+      inc(iParam);
+    End;
+
+  End;
+
+  InitLog;
+  pUpdObj := tUpdObj.create;
+  pUpdObj.date_time := Now;
+  pUpdObj.updversion := _getVersion(Paramstr(0));
+  sLog.S['dateupdate'] := formatdatetime(SQLiteDateTimeFormat, pUpdObj.date_time);
+  sLog.S['updbackup'] := pUpdObj.updversion;
+  TempPath := tPath.GetTempPath + 'Corilus_BackupXE\';
+  UndoPath := TempPath + 'Undo\';
+
+  AddLog('TempPath : ' + TempPath);
+  AddLog('UndoPath : ' + UndoPath);
+
+  StartUpdate;
+
+End;
+
+Procedure TfUpdBAckup.FindBat;
+Var
+  SR                : tSearchRec;
+  Found             : Integer;
+Begin
+  FreeAndNil(lBatch);
+  lBatch := tStringList.create;
+  AddLog('Start searching for .bat files in [' + OPSWBackupPathOld + ']');
+  Found := FindFirst(OPSWBackupPathOld + '*.bat', faAnyFile, SR);
+  While Found = 0 Do
+  Begin
+    lBatch.Add(OPSWBackupPathOld + SR.Name);
+    AddLog('File [' + OPSWBackupPathOld + SR.Name + '] found');
+    Found := FindNext(SR);
+  End;
+  FindClose(SR);
+End;
+
+Procedure TfUpdBAckup.LoadBat(sFileName: String);
+Begin
+  FreeAndNil(lBat);
+  lBat := tStringList.create;
+  lBat.LoadFromFile(sFileName);
+End;
+
+Function TfUpdBAckup.MakeaFileEntryRecord(sEntry: String): tFileEntryRecord;
+Var
+  aFileEntryRecord  : tFileEntryRecord;
+  iPos              : Integer;
+Begin
+  aFileEntryRecord := tFileEntryRecord.create;
+  iPos := pos('*.*', sEntry);
+  If iPos > 0 Then
+    Delete(sEntry, iPos, (Length(sEntry) - iPos) + 1);
+  aFileEntryRecord.sFullName := sEntry;
+  If sEntry[Length(sEntry)] <> '\' Then
+  Begin
+    aFileEntryRecord.bIsFile := True;
+    aFileEntryRecord.bRecurs := False;
+  End
+  Else
+  Begin
+    aFileEntryRecord.bIsFile := False;
+    aFileEntryRecord.bRecurs := True;
+  End;
+
+  Result := aFileEntryRecord;
+End;
+
+Function TfUpdBAckup.LoadSet(sFileName: String): tSet;
+Var
+  aSet              : tSet;
+  aConfigMailRecord : pConfigMailRecord;
+  aMailRuleRecord   : tMailRuleRecord;
+  aFileEntryRecord  : tFileEntryRecord;
+  aRotationRecord   : pRotationRecord;
+  SetFile           : tIniFile;
+  lFiles            : tStrings;
+  lMailRules        : tStrings;
+  iRule             : Integer;
+  iFile             : Integer;
+  _tmp              : Integer;
+  masque            : String;
+Begin
+  If FileExists(sFileName) Then
+  Begin
+    aSet := tSet.create;
+    SetFile := tIniFile.create(sFileName);
+    aSet.destination := SetFile.ReadString('options', 'file', 'NUL');
+    lFiles := tStringList.create;
+    SetFile.ReadSectionValues('files', lFiles);
+
+    iFile := 0;
+    While iFile <= lFiles.Count - 1 Do
+    Begin
+      _tmp := pos('=', lFiles[iFile]);
+      masque := Copy(lFiles[iFile], _tmp + 1, Length(lFiles[iFile]) - _tmp);
+      aFileEntryRecord := MakeaFileEntryRecord(masque);
+      lFiles[iFile] := aFileEntryRecord.sFullName;
+      lFiles.Objects[iFile] := aFileEntryRecord;
+      inc(iFile);
+    End;
+    aSet.lEntries := lFiles;
+
+    New(aRotationRecord);
+    aRotationRecord.AgeMax := SetFile.ReadInteger('options', 'NbJours', 0);
+    aRotationRecord.NbMax := SetFile.ReadInteger('options', 'NbOnDisk', 0);
+
+    aSet.aRotation := aRotationRecord;
+
+    New(aConfigMailRecord);
+    aConfigMailRecord.User := SetFile.ReadString('ConfigMail', 'User', 'User Name');
+    aConfigMailRecord.Pass := SetFile.ReadString('ConfigMail', 'Pass', 'Pass');
+    aConfigMailRecord.SMTP := SetFile.ReadString('ConfigMail', 'SMTP', 'Server');
+    aConfigMailRecord.From := SetFile.ReadString('ConfigMail', 'From', 'From');
+
+    aSet.aConfigMail := aConfigMailRecord;
+
+    lMailRules := tStringList.create;
+    aSet.lMailRules := tStringList.create;
+    SetFile.ReadSections(lMailRules);
+    iRule := 0;
+
+    While (iRule <= lMailRules.Count - 1) Do
+    Begin
+      If (pos('MAILRULE', lMailRules[iRule]) > 0) Then
+      Begin
+        aMailRuleRecord := tMailRuleRecord.create;
+        aMailRuleRecord.When := SetFile.ReadString(lMailRules[iRule], 'When', '0');
+        aMailRuleRecord.sTo := SetFile.ReadString(lMailRules[iRule], 'To', '');
+        aSet.lMailRules.AddObject(aMailRuleRecord.sTo, aMailRuleRecord);
+      End;
+      inc(iRule);
+    End;
+
+    FreeAndNil(lMailRules);
+    SetFile.Free;
+  End;
+
+  Result := aSet;
+End;
+
+Procedure TfUpdBAckup.ConvertBat;
+Var
+  I                 : Integer;
+  bAdd              : Boolean;
+  iPos              : Integer;
+  sOldCmdLine       : String;
+Begin
+  If lBat = Nil Then
+    exit;
+  FreeAndNil(lNewBat);
+  lNewBat := tStringList.create;
+  I := 0;
+  AddLog('      Searching for "' + OPSWBackupCmd + '" in batch file');
+  While I <= lBat.Count - 1 Do
+  Begin
+    bAdd := True;
+    iPos := pos(UpperCase(OPSWBackupCmd), UpperCase(lBat[I]));
+    If iPos <> 0 Then
+    Begin
+      bAdd := False;
+      sOldCmdLine := lBat[I];
+      AddLog('      ** found **');
+      lNewBat.Add(ConvertCmdLine(sOldCmdLine));
+    End;
+    If bAdd Then
+      lNewBat.Add(lBat[I]);
+    inc(I);
+  End;
+End;
+
+Procedure TfUpdBAckup.ConvertSets;
+Var
+  iSet              : Integer;
+  sXml              : String;
+Begin
+  If lSet <> Nil Then
+  Begin
+    iSet := 0;
+    While iSet <= lSet.Count - 1 Do
+    Begin
+      sXml := tPath.GetFileNameWithoutExtension(ExtractFileName(lSet[iSet])) + '.set';
+      AddLog('   Loading [' + lSet[iSet] + '] file');
+      //SaveXML(sXml, LoadSet(lSet[iSet]));
+      SaveSet(sXml, LoadSet(lSet[iSet]));
+      AddLog('   Saving [' + OPSWBackupPath + sXml + '] file');
+      inc(iSet);
+    End;
+  End;
+End;
+
+Procedure TfUpdBAckup.ConvertXML;
+Var
+  iSet              : Integer;
+  sXml              : String;
+  sJson             : String;
+Begin
+  If lSet <> Nil Then
+  Begin
+    iSet := 0;
+    While iSet <= lSet.Count - 1 Do
+    Begin
+      sXml := tPath.GetFileNameWithoutExtension(ExtractFileName(lSet[iSet])) + '.XML';
+      sJson := tPath.GetFileNameWithoutExtension(ExtractFileName(lSet[iSet])) + '.set';
+      AddLog('   Loading [' + lSet[iSet] + '] file');
+
+      XML2Set(sXml, sJson);             //, LoadSet(lSet[iSet]));
+      AddLog('   Saving [' + OPSWBackupPath + sJson + '] file');
+      inc(iSet);
+    End;
+  End;
+End;
+
+Procedure TfUpdBAckup.ConvertBatches;
+Var
+  iBat              : Integer;
+  sNewBat           : String;
+Begin
+  If lBatch <> Nil Then
+  Begin
+    iBat := 0;
+    While iBat <= lBatch.Count - 1 Do
+    Begin
+      AddLog('   Loading [' + lBatch[iBat] + '] file');
+      LoadBat(lBatch[iBat]);
+      ConvertBat;
+      sNewBat := OPSWBackupPath + ExtractFileName(lBatch[iBat]);
+      AddLog('   Saving new batch [' + sNewBat + ']');
+      lNewBat.SaveToFile(sNewBat);
+      inc(iBat);
+    End;
+  End;
+End;
+
+Procedure TfUpdBAckup.XML2Set(sXMLName: String; sSetName: String); // aSet: tSet);
+Var
+  XML               : TXmlVerySimple;
+  Node              : TXMLNode;
+  OptionNode        : TXMLNode;
+  MailNode, RcptNode: TXMLNode;
+  Folder            : TXMLNode;
+  I                 : Integer;
+  XMLLoaded         : pXMLLoaded;
+  aFileEntryRecord  : tFileEntryRecord;
+  aXMLAttribute     : tXMLAttribute;
+  aConfig           : ISuperObject;
+  aRules            : ISuperArray;
+  aEntries          : ISuperArray;
+  aFile             : TextFile;
+Begin
+  XML := TXmlVerySimple.create;
+  XML.LoadFromFile(OPSWBackupPath + sXMLName);
+  Node := XML.DocumentElement.Find('Options');
+  OptionNode := Node.Find('Running');
+
+  aConfig := SO;
+  aConfig.S['filename'] := OPSWBackupPath + sSetName;
+  aConfig.I['compressionlevel'] := 1;
+  aConfig.S['destination'] := Node.Attributes['Destination'];
+  aConfig.I['nbmax'] := strtointdef(Node.Attributes['NbMax'], 0);
+  aConfig.I['agemax'] := strtointdef(Node.Attributes['AgeMax'], 0);
+  aConfig.B['version'] := True;
+  aConfig.B['local'] := True;
+  aConfig.B['popups'] := StrToBool(OptionNode.Attributes['PopUps']);
+  aConfig.B['visible'] := StrToBool(OptionNode.Attributes['Visible']);
+
+  OptionNode := Node.Find('Debug');
+
+  aConfig.B['generatelog'] := StrToBool(OptionNode.Attributes['Generate_Logs']);
+  aConfig.S['mainlogdir'] := '';
+  aConfig.S['server'] := 'localhost\sqlserver';
+  aConfig.S['proxyserver'] := '';
+  aConfig.I['proxyport'] := 0;
+
+  aRules := SA;
+  I := 0;
+
+  MailNode := Node.Find('Mails');
+
+  I := 0;
+  While I <= MailNode.ChildNodes.Count - 1 Do
+  Begin
+    RcptNode := MailNode.ChildNodes[I];
+    With aRules.O[0] Do
+    Begin
+      S['to'] := RcptNode.Attributes['To'];
+      I['when'] := strtointdef(RcptNode.Attributes['Rule'], 0);
+    End;
+    inc(I);
+  End;
+
+  aConfig.A['rules'] := aRules;
+
+  aEntries := SA;
+
+  Node := XML.DocumentElement.Find('Content');
+  Node := Node.Find('Entries');
+
+  I := 0;
+  While I <= Node.ChildNodes.Count - 1 Do
+  Begin
+    Folder := Node.ChildNodes[I];
+    With aEntries.O[0] Do
+    Begin
+      S['name'] := Folder.Attributes['Name'];
+      If StrToBool(Folder.Attributes['IsFile']) Then
+        I['type'] := 1
+      Else
+        I['type'] := 0;
+
+      If StrToBool(Folder.Attributes['Recurse']) Then
+        I['recurs'] := 1
+      Else
+        I['recurs'] := 0;
+    End;
+    inc(I);
+  End;
+
+  aConfig.A['entries'] := aEntries;
+
+  XML.Free;
+
+  AssignFile(aFile, aConfig.S['filename']);
+  Rewrite(aFile);
+  Writeln(aFile, aConfig.AsJSON(True));
+  CloseFile(aFile);
+  deletefile(OPSWBackupPath + sXMLName);
+End;
+
+Procedure TfUpdBAckup.SaveSet(sFileName: String; aSet: tSet);
+Var
+  aFileEntryRecord  : tFileEntryRecord;
+  aConfigMailRecord : pConfigMailRecord;
+  aRotationRecord   : pRotationRecord;
+  aConfig           : ISuperObject;
+  aRules            : ISuperArray;
+  aEntries          : ISuperArray;
+  aFile             : TextFile;
+  I                 : Integer;
+  sTo               : String;
+  iWhen             : Integer;
+Begin
+  aRotationRecord := pRotationRecord(aSet.aRotation);
+  aConfigMailRecord := pConfigMailRecord(aSet.aConfigMail);
+
+  aConfig := SO;
+  aConfig.S['filename'] := OPSWBackupPath + sFileName;
+  aConfig.I['compressionlevel'] := 1;
+  aConfig.S['destination'] := aSet.destination;
+  aConfig.I['nbmax'] := aRotationRecord.NbMax;
+  aConfig.I['agemax'] := aRotationRecord.AgeMax;
+  aConfig.B['version'] := True;
+  aConfig.B['local'] := True;
+  aConfig.B['popups'] := True;
+  aConfig.B['visible'] := False;
+  aConfig.B['generatelog'] := True;
+  aConfig.S['mainlogdir'] := '';
+  aConfig.S['server'] := 'localhost\sqlserver';
+  aConfig.S['proxyserver'] := '';
+  aConfig.I['proxyport'] := 0;
+
+  aRules := SA;
+  I := 0;
+
+  While I <= aSet.lMailRules.Count - 1 Do
+  Begin
+    If aSet.lMailRules.Objects[I] <> Nil Then
+    Begin
+      sTo := tMailRuleRecord(aSet.lMailRules.Objects[I]).sTo;
+      iWhen := strtointdef(tMailRuleRecord(aSet.lMailRules.Objects[I]).When, 0);
+      With aRules.O[0] Do
+      Begin
+        S['to'] := sTo;
+        I['when'] := iWhen;
+      End;
+    End;
+    inc(I);
+  End;
+
+  aConfig.A['rules'] := aRules;
+  aEntries := SA;
+
+  I := 0;
+
+  While I <= aSet.lEntries.Count - 1 Do
+  Begin
+    If aSet.lEntries.Objects[I] <> Nil Then
+    Begin
+      aFileEntryRecord := tFileEntryRecord(aSet.lEntries.Objects[I]);
+      With aEntries.O[0] Do
+      Begin
+        S['name'] := aFileEntryRecord.sFullName;
+        If aFileEntryRecord.bIsFile Then
+          I['type'] := 1
+        Else
+          I['type'] := 0;
+
+        If aFileEntryRecord.bRecurs Then
+          I['recurs'] := 1
+        Else
+          I['recurs'] := 0;
+      End;
+    End;
+    inc(I);
+  End;
+
+  aConfig.A['entries'] := aEntries;
+
+  Dispose(aRotationRecord);
+  Dispose(aConfigMailRecord);
+
+  // Save File
+  AssignFile(aFile, aConfig.S['filename']);
+  Rewrite(aFile);
+  Writeln(aFile, aConfig.AsJSON(True));
+  CloseFile(aFile);
+
+End;
+
+Procedure TfUpdBAckup.SaveXML(sFileName: String; aSet: tSet);
+(*
+var
+  XML: TXmlVerySimple;
+  OptionsNode, OptionNode, ContentNode, FoldersNode, FolderNode: TXMLNode;
+  MailNode, RcptNode: TXMLNode;
+  i: Integer;
+  iRow: Integer;
+  aFileEntryRecord: tFileEntryRecord;
+  aConfigMailRecord: pConfigMailRecord;
+  aRotationRecord: pRotationRecord;*)
+Begin
+
+  (*
+    XML := TXmlVerySimple.Create;
+    XML.AddChild('Backup');
+
+    OptionsNode := XML.DocumentElement.AddChild('Options');
+    OptionsNode.Attributes['Print_Report'] := 'False';
+    OptionsNode.Attributes['Printer'] := 'Default';
+    OptionsNode.Attributes['Level'] := '6';
+    OptionsNode.Attributes['Destination'] := aSet.destination;
+
+    aRotationRecord := pRotationRecord(aSet.aRotation);
+
+    OptionsNode.Attributes['NbMax'] := Inttostr(aRotationRecord.NbMax);
+    OptionsNode.Attributes['AgeMax'] := Inttostr(aRotationRecord.AgeMax);
+
+    dispose(aRotationRecord);
+
+    OptionsNode.Attributes['Version'] := 'True';
+    OptionsNode.Attributes['Local'] := 'True';
+
+    OptionNode := OptionsNode.AddChild('Running');
+
+    OptionNode.Attributes['PopUps'] := 'True';
+    OptionNode.Attributes['Visible'] := 'False';
+    OptionNode := OptionsNode.AddChild('Debug');
+    OptionNode.Attributes['MainLogDir'] := '';
+    OptionNode.Attributes['Generate_Logs'] := 'True';
+
+    MailNode := OptionsNode.AddChild('Mails');
+    aConfigMailRecord := pConfigMailRecord(aSet.aConfigMail);
+    MailNode.Attributes['SMTP'] := aConfigMailRecord.SMTP;
+    MailNode.Attributes['From'] := aConfigMailRecord.From;
+    MailNode.Attributes['User'] := aConfigMailRecord.User;
+    MailNode.Attributes['Password'] := aConfigMailRecord.Pass;
+
+    dispose(aConfigMailRecord);
+    // Save the recipients ....
+    i := 0;
+
+    while i <= aSet.lMailRules.Count - 1 do
+    begin
+      if aSet.lMailRules.Objects[i] <> Nil then
+      begin
+        RcptNode := MailNode.AddChild('Rcpt');
+        RcptNode.Attributes['To'] := tMailRuleRecord(aSet.lMailRules.Objects[i]).sTo;
+        RcptNode.Attributes['Rule'] := tMailRuleRecord(aSet.lMailRules.Objects[i]).When;
+      end;
+      inc(i);
+    end;
+
+    ContentNode := XML.DocumentElement.AddChild('Content');
+    FoldersNode := ContentNode.AddChild('Entries');
+
+    iRow := 0;
+
+    while iRow <= aSet.lEntries.Count - 1 do
+    begin
+      if aSet.lEntries.Objects[iRow] <> Nil then
+      begin
+        aFileEntryRecord := tFileEntryRecord(aSet.lEntries.Objects[iRow]);
+        FolderNode := FoldersNode.AddChild('Entry');
+        FolderNode.Attributes['Name'] := aFileEntryRecord.sFullName;
+        FolderNode.Attributes['IsFile'] := BoolToStr(aFileEntryRecord.bIsFile, True);
+        FolderNode.Attributes['Recurse'] := BoolToStr(aFileEntryRecord.bRecurs, True);
+      end;
+      inc(iRow);
+    end;
+
+    XML.SaveToFile(OPSWBackupPath + sFileName);
+    XML.Free;
+    *)
+End;
+
+Procedure TfUpdBAckup.lb1MouseUp(Sender: TObject; Button: TMouseButton; Shift: TShiftState; X, Y: Integer);
+Var
+  aPoint            : tPoint;
+  I                 : Integer;
+Begin
+  (* i := lb1.ItemAtPos(tPoint.Create(X, Y), False);
+    if i <> -1 then
+    begin
+    if i < lb1.Items.Count then
+    begin
+    lCmd.Caption := lb1.Items[i];
+    end;
+    end; *)
+End;
+
+Procedure TfUpdBAckup.ExtractZip;
+Var
+  I                 : Integer;
+Begin
+  ExtractResource(OPSWBackupPath, 'CSCXE', TempPath + 'CSCXE.zip');
+  AddLog('Extracting [' + TempPath + 'CSCXE.zip]');
+  ZipKit.FileName := Addslash(TempPath) + 'CSCXE.zip';
+  AddLog('Decompression');
+  ZipKit.BaseDirectory := Addslash(TempPath);
+  I := 0;
+  AddLog('Zip content : ');
+  While I <= ZipView1.Count - 1 Do
+  Begin
+    AddLog('  - ' + ZipView1.Items[I].FileName + ' [' + Inttostr(ZipView1.Items[I].compressedSize) + '] ->' + ' [' +
+      Inttostr(ZipView1.Items[I].UnCompressedSize) + '] CRC : ' + Inttostr(ZipView1.Items[I].CRC32));
+    inc(I);
+  End;
+
+  ZipKit.ExtractFiles('*.*');
+  ZipKit.CloseArchive;
+  deletefile(Addslash(TempPath) + 'CSCXE.zip');
+  AddLog('Deleting Zip file');
+End;
+
+Function TfUpdBAckup.GetGOAPB: String;
+Var
+  sAPB              : String;
+  SEInfo            : TShellExecuteInfo;
+  ExitCode          : DWord;
+  ExecuteFile, ParamString, StartInString: String;
+  f                 : TextFile;
+  APBFile           : String;
+  Buffer            : String;
+  match             : tMatch;
+
+  Procedure CreateAPBCmd;
+  Var
+    f               : TextFile;
+
+  Begin
+    If (FileExists(Addslash(ExtractFileDir(Paramstr(0))) + GreenockMaintenance)) Then
+      deletefile(pChar(Addslash(ExtractFileDir(Paramstr(0))) + GreenockMaintenance));
+
+    AssignFile(f, Addslash(ExtractFileDir(Paramstr(0))) + GreenockMaintenance);
+    Rewrite(f);
+    Write(f, Format(GOAPBCmd, [Addslash(ExtractFileDir(Paramstr(0)))]));
+    System.close(f);
+  End;
+
+Begin
+  CreateAPBCmd;
+  sAPB := '';
+  ParamString := '';
+  StartInString := Addslash(ExtractFileDir(Paramstr(0)));
+  Fillchar(SEInfo, SizeOf(SEInfo), 0);
+  SEInfo.cbSize := SizeOf(TShellExecuteInfo);
+  With SEInfo Do
+  Begin
+    fMask := SEE_MASK_NOCLOSEPROCESS;
+    Wnd := Application.Handle;
+    lpFile := pChar(Addslash(ExtractFileDir(Paramstr(0))) + GreenockMaintenance);
+    lpParameters := pChar(ParamString);
+    lpDirectory := pChar(StartInString);
+    nShow := SW_HIDE;
+  End;
+
+  // LogMessage(StartInString + ExecuteFile + ' ' + ParamString);
+  If ShellExecuteEx(@SEInfo) Then
+  Begin
+    Repeat
+      Application.ProcessMessages;
+      GetExitCodeProcess(SEInfo.hProcess, ExitCode);
+    Until (ExitCode <> STILL_ACTIVE) Or Application.Terminated;
+  End;
+
+  deletefile(pChar(Addslash(ExtractFileDir(Paramstr(0))) + GreenockMaintenance));
+
+  APBFile := Addslash(ExtractFileDir(Paramstr(0))) + 'APB.TXT';
+  If FileExists(APBFile) Then
+  Begin
+    AssignFile(f, APBFile);
+    Reset(f);
+    Readln(f, Buffer);
+    match := tRegex.match(Buffer, '\d{6}');
+    If match.success Then
+      sAPB := match.Value;
+
+    CloseFile(f);
+    deletefile(pChar(APBFile));
+  End;
+
+  Result := sAPB;
+End;
+
+End.
+

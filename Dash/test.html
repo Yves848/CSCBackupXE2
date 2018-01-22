@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <link type="text/css" href="css/bootstrap.min.css" rel="stylesheet">
+    <link type="text/css" href="css/bootstrap-table.min.css" rel="stylesheet">
+    <link type="text/css" href="css/font-awesome.css" rel="stylesheet">
+    <script src="Scripts/jquery-3.1.1.js"></script>
+    <script src="js/bootstrap.min.js"></script>
+    <script src="js/bootstrap-table.min.js"></script>
+    <script>
+
+        $(document).ready(
+
+            function(){
+                $("#master").on('click-row.bs.table',function(e,row,$element,event){
+                    $lid = row.id;
+                    $('#modal_detail').modal('show');
+                })
+            }
+        );
+    </script>
+    <style>
+        #master tbody tr:hover td, #master tbody th:hover th {
+            background-color: #bfcd33;
+        }
+    </style>
+    <meta charset="UTF-8">
+    <title>Test table</title>
+</head>
+<body>
+
+<div class="container-fluid">
+    <div class="col-md-12">
+        <div class="page-header">
+            <h1>
+                CSCBackup Updates history.
+            </h1>
+        </div>
+        <div id="toolbar">
+            <button id="remove" class="btn btn-danger" disabled>
+                <i class="glyphicon glyphicon-remove"></i> Delete
+            </button>
+        </div>
+
+        <div class="panel panel-success">
+            <div class="panel-body">
+                <div class="row">
+                    <div class="col-md-12">
+                        <table id="master"
+                               data-toggle="table"
+                               data-toolbar="#toolbar"
+                               data-url="select_sessions.php"
+                               data-show-columns="true"
+                               data-pagination="true"
+                               data-search="true"
+                               data-height="520"
+                               data-sort-name="apb">
+                            <thead>
+                            <tr >
+                                <th data-field="id" data-sortable="true">Id</th>
+                                <th data-field="apb" data-sortable="true">APB</th>
+                                <th data-field="date" data-sortable="true">Date</th>
+                            </tr>
+                            </thead>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="modal fade" id="modal_detail" role="dialog" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-body">
+                        <table id="detail"
+                               data-toggle="table"
+                               data-url="select_logs.php"
+                               data-query-params="queryParam"
+                               data-show-columns="true"
+                               data-pagination="true"
+                               data-search="true"
+                               data-height="520"
+                               data-sort-name="apb">
+                            <thead>
+                            <tr >
+                                <th data-field="id" data-sortable="true">Id</th>
+                                <th data-field="date" data-sortable="true">Date</th>
+                                <th data-field="description" data-sortable="true">Description</th>
+                            </tr>
+                            </thead>
+                        </table>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+</html>

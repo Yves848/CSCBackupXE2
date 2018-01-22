@@ -1,0 +1,31 @@
+[11:04:47] Undo file generated at [C:\Users\corilususer\AppData\Local\Temp\Corilus_BackupXE\Undo\Old.zip]
+[11:04:49] Process OPSWBACKUP.EXE is not running
+[11:04:49] Process CSCBACKUPXE.EXE is not running
+[11:04:49] Extracting [C:\Users\corilususer\AppData\Local\Temp\Corilus_BackupXE\CSCXE.zip]
+[11:04:49] Decompression
+[11:04:49] Zip content : 
+[11:04:49]   - ChangeLog.txt [984] -> [2220] CRC : -333931821
+[11:04:49]   - CSCBackupXE.exe [3655290] -> [7081984] CRC : -1926615304
+[11:04:50] Deleting Zip file
+[11:04:50] Directory [C:\corilus_backup\] found.  Renaming to [C:\corilus_backup_Old\]
+[11:04:50] Creating new directory [C:\corilus_backup\]
+[11:04:50] Start searching for .bat files in [C:\corilus_backup_Old\]
+[11:04:50] File [C:\corilus_backup_Old\Greenock_FullHD.bat] found
+[11:04:50] File [C:\corilus_backup_Old\Greenock_LogHD.bat] found
+[11:04:50]    Loading [C:\corilus_backup_Old\Greenock_FullHD.bat] file
+[11:04:50]       Searching for "opswbackup.exe" in batch file
+[11:04:50]       ** found **
+[11:04:50]          Converting "C:\corilus_backup\opswbackup.exe C:\corilus_backup\Greenock_FullHD.set" to "C:\corilus_backup\CSCBackupXE.exe /config="C:\corilus_backup\Greenock_FullHD.xml" /auto"
+[11:04:50]    Saving new batch [C:\corilus_backup\Greenock_FullHD.bat]
+[11:04:50]    Loading [C:\corilus_backup_Old\Greenock_LogHD.bat] file
+[11:04:50]       Searching for "opswbackup.exe" in batch file
+[11:04:50]       ** found **
+[11:04:50]          Converting "C:\corilus_backup\opswbackup.exe C:\corilus_backup\Greenock_LogHD.set" to "C:\corilus_backup\CSCBackupXE.exe /config="C:\corilus_backup\Greenock_LogHD.xml" /auto"
+[11:04:50]    Saving new batch [C:\corilus_backup\Greenock_LogHD.bat]
+[11:04:50] Start searching for .set files in [C:\corilus_backup_Old\]
+[11:04:50] File [C:\corilus_backup_Old\Greenock_FullHD.set] found
+[11:04:50] File [C:\corilus_backup_Old\Greenock_LogHD.set] found
+[11:04:50]    Loading [C:\corilus_backup_Old\Greenock_FullHD.set] file
+[11:04:50]    Saving [C:\corilus_backup\Greenock_FullHD.xml] file
+[11:04:50]    Loading [C:\corilus_backup_Old\Greenock_LogHD.set] file
+[11:04:50]    Saving [C:\corilus_backup\Greenock_LogHD.xml] file

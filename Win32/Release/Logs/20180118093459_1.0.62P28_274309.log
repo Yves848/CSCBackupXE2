@@ -1,0 +1,79 @@
+{
+  "apb":"274309",
+  "datestart":"2018-01-18 09:34:58.954",
+  "datestop":"2018-01-18 09:38:37.962",
+  "result":  0,
+  "cscversion":"2.1.0.0",
+  "version":"1.0.62",
+  "patch":"P28",
+  "pharma":"Pharmacie Sotiaux, S.A.",
+  "group":"Null",
+  "Errors":  
+  [
+    {
+      "tag":"2018-01-18 09:34:59.020",
+      "file":"c:\\ProgramData\\Corilus\\Common\\Data\\SQLServer\\backup_Before_Recup0\\",
+      "message":"Directory not found",
+      "code":      -1    
+    },
+    {
+      "tag":"2018-01-18 09:38:37.962",
+      "file":"",
+      "message":"Archive Invalid",
+      "code":      -1    
+    }  
+  ],
+  "entries":  
+  [
+    {
+      "tag":"2018-01-18 09:34:59.207",
+      "name":"ProgramData/Corilus/Common/Data/SQLServer/backup_Before_Recup/cpcl.bak",
+      "uncompressed":      4358656,
+      "compressed":      597717    
+    },
+    {
+      "tag":"2018-01-18 09:35:00.635",
+      "name":"ProgramData/Corilus/Common/Data/SQLServer/backup_Before_Recup/Greenock.bak",
+      "uncompressed":      819099136,
+      "compressed":      111957986    
+    },
+    {
+      "tag":"2018-01-18 09:36:49.344",
+      "name":"GOG Games/PlanetNomads/PlanetNomads_Data/output_log.txt",
+      "uncompressed":      22547,
+      "compressed":      3034    
+    },
+    {
+      "tag":"2018-01-18 09:36:49.874",
+      "name":"Recups/backups/Farmad/ACURA_714903/DBGreenock/CPCL.BAK",
+      "uncompressed":      4321280,
+      "compressed":      577364    
+    },
+    {
+      "tag":"2018-01-18 09:36:51.771",
+      "name":"Recups/backups/Farmad/ACURA_714903/DBGreenock/GREENOCK.BAK",
+      "uncompressed":      819126272,
+      "compressed":      111918688    
+    }  
+  ],
+  "results":  
+  {
+    "result":    1,
+    "errors":    2,
+    "archivename":"c:\\temp\\20180118093459_1.0.62P28_274309.cor"  
+  },
+  "rules":  
+  [
+    {
+      "to":"st.raid@corilus.be",
+      "when":      0    
+    }  
+  ],
+  "upload":  
+  [
+    {
+      "result":"ok",
+      "apb":"274309"    
+    }  
+  ]
+}

@@ -1,0 +1,50 @@
+[7:40:00] Creating Temporary Folder C:\Users\Administrator\AppData\Local\Temp\1\Corilus_BackupXE\
+[7:40:00] Creating Undo Folder C:\Users\Administrator\AppData\Local\Temp\1\Corilus_BackupXE\Undo\
+[7:40:01] Undo file generated at [C:\Users\Administrator\AppData\Local\Temp\1\Corilus_BackupXE\Undo\Old.zip]
+[7:40:03] Process OPSWBACKUP.EXE is not running
+[7:40:03] Process CSCBACKUPXE.EXE is not running
+[7:40:03] Extracting [C:\Users\Administrator\AppData\Local\Temp\1\Corilus_BackupXE\CSCXE.zip]
+[7:40:03] Decompression
+[7:40:03] Zip content : 
+[7:40:03]   - ChangeLog.txt [1014] -> [2298] CRC : 1777938583
+[7:40:03]   - CSCBackupXE.exe [3654996] -> [7082496] CRC : 1928385867
+[7:40:04] Deleting Zip file
+[7:40:04] Directory [C:\corilus_backup\] found.  Renaming to [C:\corilus_backup_Old\]
+[7:40:04] Creating new directory [C:\corilus_backup\]
+[7:40:04] Start searching for .bat files in [C:\corilus_backup_Old\]
+[7:40:04] File [C:\corilus_backup_Old\Backup_MD.bat] found
+[7:40:04] File [C:\corilus_backup_Old\Backup_PhWin.bat] found
+[7:40:04] File [C:\corilus_backup_Old\Greenock_FullHD.bat] found
+[7:40:04] File [C:\corilus_backup_Old\Greenock_LogHD.bat] found
+[7:40:04]    Loading [C:\corilus_backup_Old\Backup_MD.bat] file
+[7:40:04]       Searching for "opswbackup.exe" in batch file
+[7:40:04]    Saving new batch [C:\corilus_backup\Backup_MD.bat]
+[7:40:04]    Loading [C:\corilus_backup_Old\Backup_PhWin.bat] file
+[7:40:04]       Searching for "opswbackup.exe" in batch file
+[7:40:04]       ** found **
+[7:40:04]          Converting "C:\corilus_backup\opswbackup.exe C:\corilus_backup\Backup_phwin.set" to "C:\corilus_backup\CSCBackupXE.exe /config="C:\corilus_backup\Backup_phwin.xml" /auto"
+[7:40:04]    Saving new batch [C:\corilus_backup\Backup_PhWin.bat]
+[7:40:04]    Loading [C:\corilus_backup_Old\Greenock_FullHD.bat] file
+[7:40:04]       Searching for "opswbackup.exe" in batch file
+[7:40:04]       ** found **
+[7:40:04]          Converting "C:\corilus_backup\opswbackup.exe C:\corilus_backup\Greenock_FullHD.set" to "C:\corilus_backup\CSCBackupXE.exe /config="C:\corilus_backup\Greenock_FullHD.xml" /auto"
+[7:40:04]    Saving new batch [C:\corilus_backup\Greenock_FullHD.bat]
+[7:40:04]    Loading [C:\corilus_backup_Old\Greenock_LogHD.bat] file
+[7:40:04]       Searching for "opswbackup.exe" in batch file
+[7:40:04]       ** found **
+[7:40:04]          Converting "C:\corilus_backup\opswbackup.exe C:\corilus_backup\Greenock_LogHD.set" to "C:\corilus_backup\CSCBackupXE.exe /config="C:\corilus_backup\Greenock_LogHD.xml" /auto"
+[7:40:04]    Saving new batch [C:\corilus_backup\Greenock_LogHD.bat]
+[7:40:04] Start searching for .set files in [C:\corilus_backup_Old\]
+[7:40:04] File [C:\corilus_backup_Old\Backup_PhWin.set] found
+[7:40:04] File [C:\corilus_backup_Old\Greenock_FullHD.set] found
+[7:40:04] File [C:\corilus_backup_Old\Greenock_LogHD.set] found
+[7:40:04]    Loading [C:\corilus_backup_Old\Backup_PhWin.set] file
+[7:40:04]    Saving [C:\corilus_backup\Backup_PhWin.xml] file
+[7:40:04]    Loading [C:\corilus_backup_Old\Greenock_FullHD.set] file
+[7:40:04]    Saving [C:\corilus_backup\Greenock_FullHD.xml] file
+[7:40:04]    Loading [C:\corilus_backup_Old\Greenock_LogHD.set] file
+[7:40:04]    Saving [C:\corilus_backup\Greenock_LogHD.xml] file
+[7:40:04] C:\Users\Administrator\AppData\Local\Temp\1\Corilus_BackupXE\ChangeLog.txt ==> C:\corilus_backup\ChangeLog.txt
+[7:40:04] C:\Users\Administrator\AppData\Local\Temp\1\Corilus_BackupXE\CSCBackupXE.exe ==> C:\corilus_backup\CSCBackupXE.exe
+[7:40:04] C:\Users\Administrator\AppData\Local\Temp\1\Corilus_BackupXE\Undo ==> C:\corilus_backup\Undo
+[7:40:04] ** Update successefully terminated **

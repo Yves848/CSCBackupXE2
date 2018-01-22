@@ -1,0 +1,10 @@
+unit UVar;
+
+interface
+
+var
+   aStringList : tStrings;
+
+implementation
+
+end.

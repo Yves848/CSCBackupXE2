@@ -1,0 +1,32 @@
+{
+    "printreport": false,
+    "printer": "Default",
+    "compressionlevel": 1,
+    "destination": "c:\\temp\\",
+    "nbmax": 0,
+    "agemax": 0,
+    "version": true,
+    "local": true,
+    "popups": true,
+    "visible": true,
+    "mails": {
+        "smtp": "",
+        "from": "",
+        "user": "",
+        "password": "",
+        "rules": [
+            {
+                "to": "",
+                "when": ""
+            },
+            {
+                "to": "",
+                "when": ""
+            }
+        ]
+    },
+    "files": [
+        "c:\\ProgramData\\Corilus\\Common\\Data\\SQLServer\\backup_After_Recup\\*",
+        "c:\\FARMADWIN2\\Database\\delphi.gdb"
+    ]
+}

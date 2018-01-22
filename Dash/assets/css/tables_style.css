@@ -1,0 +1,39 @@
+table#backupmaster tr{
+     color: #000000;
+     height: 22px;
+ }
+table#backupmaster tbody{
+    color: #34b9ff;
+
+}
+table#backupmaster tr:nth-child(odd) {
+    background-color: #ffffff;
+    height: 18px;
+
+}
+table#backupmaster tr:nth-child(even) {
+    background-color: #ffffff;
+    height: 18px;
+}
+
+table#detail {
+    border: 1px solid #000000;
+    border-collapse: collapse;
+    padding: 5px;
+    width: 100%;
+}
+
+table#detail tr{
+    font-family: Belgium;
+    font-weight: normal;
+    color: #000000;
+    height: 24px;
+}
+
+table#detail tr:nth-child(odd) {
+    background-color: #ffffff;
+
+}
+table#detail tr:nth-child(even) {
+    background-color: #ffffff;
+}

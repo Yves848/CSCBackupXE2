@@ -1,0 +1,18 @@
+<div class="container-fluid" ng-controller="DetailController">
+<h2>DETAIL ..... Backup N° {{Id}}</h2>
+
+<table class="table table-stripped table-hover">
+    <tr dir-paginate="detail in details|itemsPerPage:50">
+        <td>{{detail.DT}}</td>
+        <td>{{detail.Description}}</td>
+        <td ng-if="detail.Type_Ligne == 1" style="background-color: crimson">{{lineState(detail.Type_Ligne)}}</td>
+        <td ng-if="detail.Type_Ligne == 0">{{lineState(detail.Type_Ligne)}}</td>
+    </tr>
+</table>
+    <dir-pagination-controls
+            max-size="50"
+            direction-links="true"
+            boundary-links="true" >
+    </dir-pagination-controls>
+
+</div>

@@ -1,0 +1,17 @@
+program UpdBackup;
+
+{$R 'gzip.res' 'gzip.rc'}
+
+uses
+  Vcl.Forms,
+  uMain in 'uMain.pas' {fUpdBAckup},
+  uLib in 'uLib.pas';
+
+{$R *.res}
+
+begin
+  Application.Initialize;
+  Application.MainFormOnTaskbar := True;
+  Application.CreateForm(TfUpdBAckup, fUpdBAckup);
+  Application.Run;
+end.

@@ -1,0 +1,394 @@
+Unit uDashBoard;
+
+Interface
+
+Uses
+  Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, System.IOUtils, ShellApi, Vcl.Graphics, CommCtrl,
+  Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.StdCtrls, Vcl.ComCtrls, XSuperObject, AbBase, AbBrowse, AbZBrows, AbZipper, AbComCtrls, AbMeter, abArcTyp, abUtils,
+  AdvSmoothCircularProgress, AdvSmoothProgressBar, AdvSmoothSlider, AdvSmoothCapacityBar, uToolCompress, uGreenockTools, Vcl.FileCtrl, FlCtrlEx, Vcl.ExtCtrls,
+  AdvSmoothPanel, AdvSmoothButton, AdvSmoothToggleButton, AdvSmoothJogWheel, AdvGlowButton, AdvBadge, AdvToolBar, Vcl.Mask, AdvSmoothExpanderButtonPanel,
+  AdvSmoothExpanderPanel, AdvSmoothTabPager, AdvDropDown, AdvMemoDropDown, GDIPPictureContainer, CurvyControls, AdvSmoothLabel, AdvSmoothSpinner,
+  AdvSmoothTrackBar, AdvTrackBar, AdvUtil, Vcl.Grids, AdvObj, BaseGrid, AdvGrid, AdvCGrid, AdvCustomGridDropDown, AdvGridDropDown, AbZipKit, AdvMemo, advmjson,
+  JvDialogs, uHTTPTools, JvComponentBase, JvTrayIcon, AdvCheckTreeView, System.ImageList, Vcl.ImgList, AdvTreeViewBase, AdvTreeViewData, AdvCustomTreeView,
+  AdvTreeView, AdvCheckedTreeView, uMain, frmctrllink, XML.VerySimple;
+
+Type
+  tPopUpEvent = Procedure(sTitle: String; sMessage: String) Of Object;
+
+  TfDash = Class(TForm)
+    Button3: TButton;
+    AdvSmoothSlider1: TAdvSmoothSlider;
+    Button4: TButton;
+    AdvSmoothPanel1: TAdvSmoothPanel;
+    AdvSmoothPanel3: TAdvSmoothPanel;
+    AdvSmoothExpanderPanel1: TAdvSmoothExpanderPanel;
+    AdvSmoothButton1: TAdvSmoothButton;
+    AdvSmoothButton2: TAdvSmoothButton;
+    btQuit: TAdvSmoothButton;
+    AdvSmoothButton3: TAdvSmoothButton;
+    stp1: TAdvSmoothTabPager;
+    tpConfig: TAdvSmoothTabPage;
+    tpContent: TAdvSmoothTabPage;
+    tpTools: TAdvSmoothTabPage;
+    GDIPPictureContainer1: TGDIPPictureContainer;
+    AdvSmoothLabel1: TAdvSmoothLabel;
+    eFileName: TCurvyEdit;
+    cbCompression: TCurvyCombo;
+    AdvSmoothLabel2: TAdvSmoothLabel;
+    AdvSmoothLabel3: TAdvSmoothLabel;
+    eDestination: TCurvyEdit;
+    AdvSmoothLabel4: TAdvSmoothLabel;
+    CurvyPanel1: TCurvyPanel;
+    swIncludePath: TAdvSmoothSlider;
+    AdvSmoothLabel7: TAdvSmoothLabel;
+    AdvSmoothLabel8: TAdvSmoothLabel;
+    swGenerateLogs: TAdvSmoothSlider;
+    AdvSmoothLabel9: TAdvSmoothLabel;
+    swGreenockVersion: TAdvSmoothSlider;
+    AdvSmoothLabel10: TAdvSmoothLabel;
+    swVisible: TAdvSmoothSlider;
+    AdvSmoothLabel11: TAdvSmoothLabel;
+    swPopups: TAdvSmoothSlider;
+    AdvSmoothLabel12: TAdvSmoothLabel;
+    rsMaxFiles: TAdvRangeSlider;
+    rsAgeMax: TAdvRangeSlider;
+    AdvSmoothExpanderPanel2: TAdvSmoothExpanderPanel;
+    AdvSmoothButton4: TAdvSmoothButton;
+    gMailRules: TAdvColumnGrid;
+    AbZipKit1: TAbZipKit;
+    AdvMemo1: TAdvMemo;
+    AdvJSONMemoStyler1: TAdvJSONMemoStyler;
+    Button1: TButton;
+    AdvSmoothButton5: TAdvSmoothButton;
+    AdvSmoothButton6: TAdvSmoothButton;
+    od1: TJvOpenDialog;
+    btnRun: TAdvSmoothButton;
+    lSQLServer: TAdvSmoothLabel;
+    eSQLServer: TCurvyEdit;
+    TrayIcon: TJvTrayIcon;
+    ilTvFileMan: TImageList;
+    ilLvFileMan: TImageList;
+    sgEntries: TAdvStringGrid;
+    Button2: TButton;
+    AdvSmoothButton7: TAdvSmoothButton;
+    Procedure btQuitClick(Sender: TObject);
+    Procedure FormCreate(Sender: TObject);
+    Procedure AdvSmoothButton2Click(Sender: TObject);
+    Procedure swGreenockVersionStateChanged(Sender: TObject; State: TAdvSmoothSliderState; Value: Double);
+    Procedure btnRunClick(Sender: TObject);
+    Procedure TrayIconBalloonShow(Sender: TObject);
+    Procedure TrayIconBalloonHide(Sender: TObject);
+    Procedure FormCloseQuery(Sender: TObject; Var CanClose: Boolean);
+    Procedure AdvMemo2DragOver(Sender, Source: TObject; X, Y: Integer; State: TDragState; Var Accept: Boolean);
+    Procedure AdvMemo2DragDrop(Sender, Source: TObject; X, Y: Integer);
+    Procedure sgEntriesControlComboList(Sender: TObject; ARow, ACol: Integer; CtrlID, CtrlType, CtrlVal: String; Values: TStringList; Var Edit: Boolean;
+      Var DropCount: Integer);
+    Procedure sgEntriesDragOver(Sender, Source: TObject; X, Y: Integer; State: TDragState; Var Accept: Boolean);
+    Procedure sgEntriesDragDrop(Sender, Source: TObject; X, Y: Integer);
+    Procedure Button2Click(Sender: TObject);
+    Procedure Button1Click(Sender: TObject);
+    Procedure AdvSmoothButton7Click(Sender: TObject);
+  private
+    { Déclarations privées }
+    CurrentConfig: ISuperObject;
+    bCanClose: Boolean;
+    Procedure Popup(sTitle: String; sMessage: String);
+    Procedure ParseConfig(pconfig: ISuperObject);
+    Procedure CleanScreenData;
+    Procedure MakeArchive(pconfig: String);
+    Procedure AddDirectoryForm(ARow: Integer);
+    Procedure AddFileForm(ARow: Integer);
+  public
+    { Déclarations publiques }
+  End;
+
+Var
+  fDash             : TfDash;
+
+Implementation
+
+(*Function GetNodeByText(ATree: TTreeView; AValue: String; AVisible: Boolean): TTreeNode;
+Var
+  Node              : TTreeNode;
+Begin
+  Result := Nil;
+  If ATree.Items.Count = 0 Then
+    exit;
+  Node := ATree.Items[0];
+  While Node <> Nil Do
+  Begin
+    If UpperCase(Node.Text) = UpperCase(AValue) Then
+    Begin
+      Result := Node;
+      If AVisible Then
+        Result.MakeVisible;
+      Break;
+    End;
+    Node := Node.GetNext;
+  End;
+End;
+
+Function TracePath(Node: TTreeNode; DirName: String): String;
+Begin
+  While Node.Parent <> Nil Do
+  Begin
+    Result := ExcludeTrailingPathDelimiter(Node.Parent.Text) + '\' + Result;
+    Node := Node.Parent;
+  End;
+  Result := Result + ExcludeTrailingPathDelimiter(DirName) + '\';
+  //FrmMain.StatusBar.SimpleText := Result;
+End;
+*)
+
+Procedure TfDash.Popup(sTitle: String; sMessage: String);
+Begin
+  If Not TrayIcon.Active Then
+    TrayIcon.Active := True;
+
+  TrayIcon.BalloonHint(sTitle, sMessage);
+End;
+
+Procedure TfDash.AddDirectoryForm(ARow: Integer);
+Begin
+  sgEntries.Cells[0, ARow] := 'Entry : <CONTROL TYPE="EDIT" WIDTH="400" VALUE = "" ID="NAME"><BR><BR>' +
+    'Mask : <CONTROL TYPE="EDIT" WIDTH="80" VALUE="*.*" ID="MASK"> ' +
+    'Type : <CONTROL TYPE="COMBO" WIDTH="100" ID="TYPE">  Recurse : <CONTROL TYPE="CHECK" WIDTH="15" VALUE="TRUE" ID="RECURSE">';
+End;
+
+Procedure TfDash.AddFileForm(ARow: Integer);
+Begin
+  sgEntries.Cells[0, ARow] := 'Entry : <CONTROL TYPE="EDIT" WIDTH="400" VALUE = "" ID="NAME"><BR>' +
+    'Type : <CONTROL TYPE="COMBO" WIDTH="100" ID="TYPE">';
+End;
+
+Procedure TfDash.CleanScreenData;
+Begin
+  eFileName.Text := '';
+  cbCompression.ItemIndex := 0;
+  rsMaxFiles.PositionLeft := 0;
+  rsAgeMax.PositionLeft := 0;
+  eDestination.Text := 'c:\temp\';
+  swIncludePath.State := ssOn;
+  swGenerateLogs.State := ssOn;
+  swGreenockVersion.State := ssOn;
+  swVisible.State := ssOff;
+  swPopups.State := ssOn;
+
+End;
+
+Procedure TfDash.ParseConfig(pconfig: ISuperObject);
+Begin
+  CleanScreenData;
+  eFileName.Text := pconfig.S['filename'];
+  cbCompression.ItemIndex := pconfig.I['compressionlevel'];
+  rsMaxFiles.PositionLeft := pconfig.I['nbmax'];
+  rsAgeMax.PositionLeft := pconfig.I['agemax'];
+  eDestination.Text := pconfig.S['destination'];
+
+  If pconfig.B['local'] Then
+    swIncludePath.State := ssOff
+  Else
+    swIncludePath.State := ssOn;
+
+  If pconfig.B['version'] Then
+    swGreenockVersion.State := ssOn
+  Else
+    swGreenockVersion.State := ssOff;
+
+  If pconfig.B['visible'] Then
+    swVisible.State := ssOn
+  Else
+    swVisible.State := ssOff;
+
+  If pconfig.B['popups'] Then
+    swPopups.State := ssOn
+  Else
+    swPopups.State := ssOff;
+
+  eSQLServer.Text := pconfig.S['server'];
+
+  btnRun.Enabled := True;
+End;
+
+Procedure TfDash.sgEntriesControlComboList(Sender: TObject; ARow, ACol: Integer; CtrlID, CtrlType, CtrlVal: String; Values: TStringList; Var Edit: Boolean;
+  Var DropCount: Integer);
+Begin
+  Values.Clear;
+  If CtrlID = 'TYPE' Then
+  Begin
+    Values.Add('Directory');
+    Values.Add('File');
+    Edit := False;
+  End;
+End;
+
+Procedure TfDash.sgEntriesDragDrop(Sender, Source: TObject; X, Y: Integer);
+Begin
+  If Source = FrmMain.TvFileMan Then
+  Begin
+    If sgEntries.Cells[0, sgEntries.RowCount - 1] <> '' Then
+      sgEntries.RowCount := sgEntries.RowCount + 1;
+    AddDirectoryForm(sgEntries.RowCount - 1);
+    sgEntries.ControlValues[0, sgEntries.RowCount - 1, 'NAME'] := TracePath(FrmMain.TvFileMan.Selected, FrmMain.TvFileMan.Selected.Text);
+    sgEntries.ControlValues[0, sgEntries.RowCount - 1, 'TYPE'] := 'Directory';
+  End;
+
+  If Source = FrmMain.LvFileMan Then
+  Begin
+    If sgEntries.Cells[0, sgEntries.RowCount - 1] <> '' Then
+      sgEntries.RowCount := sgEntries.RowCount + 1;
+    AddFileForm(sgEntries.RowCount - 1);
+    sgEntries.ControlValues[0, sgEntries.RowCount - 1, 'NAME'] := TracePath(FrmMain.TvFileMan.Selected, FrmMain.TvFileMan.Selected.Text) + FrmMain.LvFileMan.Selected.Caption;
+    sgEntries.ControlValues[0, sgEntries.RowCount - 1, 'TYPE'] := 'File';
+  End;
+
+End;
+
+Procedure TfDash.sgEntriesDragOver(Sender, Source: TObject; X, Y: Integer; State: TDragState; Var Accept: Boolean);
+Begin
+  Accept := ((Source = FrmMain.TvFileMan) Or (Source = FrmMain.LvFileMan));
+End;
+
+Procedure TfDash.swGreenockVersionStateChanged(Sender: TObject; State: TAdvSmoothSliderState; Value: Double);
+Begin
+  Case State Of
+    ssOn:
+      Begin
+        lSQLServer.Visible := True;
+        eSQLServer.Visible := True;
+      End;
+    ssOff:
+      Begin
+        lSQLServer.Visible := False;
+        eSQLServer.Visible := False;
+      End;
+  End;
+End;
+
+Procedure TfDash.TrayIconBalloonHide(Sender: TObject);
+Begin
+  bCanClose := True;
+End;
+
+Procedure TfDash.TrayIconBalloonShow(Sender: TObject);
+Begin
+  bCanClose := False;
+End;
+
+Procedure TfDash.MakeArchive(pconfig: String);
+Var
+  ptoCompress       : tToCompress;
+  jsResult          : ISuperObject;
+Begin
+
+  ptoCompress := tToCompress.create(Self, pconfig, Nil, Nil);
+  ptoCompress.pPopUps := Self.Popup;
+  //pToCompress.Visible := True;
+  jsResult := ptoCompress.MakeZip;
+  AdvMemo1.Clear;
+  AdvMemo1.Lines.Text := jsResult.AsJSON(True);
+End;
+
+{$R *.dfm}
+
+Procedure TfDash.AdvMemo2DragDrop(Sender, Source: TObject; X, Y: Integer);
+Begin
+  If Source = FrmMain.TvFileMan Then
+  Begin
+
+    // AdvMemo2.Lines.Add(TracePath(FrmMain.TvFileMan.Selected, FrmMain.TvFileMan.Selected.Text));
+  End;
+End;
+
+Procedure TfDash.AdvMemo2DragOver(Sender, Source: TObject; X, Y: Integer; State: TDragState; Var Accept: Boolean);
+Begin
+  Accept := True;
+End;
+
+Procedure TfDash.AdvSmoothButton2Click(Sender: TObject);
+Begin
+  If od1.Execute Then
+  Begin
+    CurrentConfig := tSuperObject.ParseFile(od1.FileName);
+    ParseConfig(CurrentConfig);
+  End;
+End;
+
+Procedure TfDash.AdvSmoothButton7Click(Sender: TObject);
+Begin
+  FrmMain.Show;
+End;
+
+Procedure TfDash.btnRunClick(Sender: TObject);
+Begin
+  MakeArchive(CurrentConfig.S['filename']);
+End;
+
+Procedure TfDash.btQuitClick(Sender: TObject);
+Begin
+  Close;
+End;
+
+Procedure TfDash.Button1Click(Sender: TObject);
+Var
+  XML               : TXmlVerySimple;
+  Node              : TXMLNode;
+  SubNode           : TXMLNode;
+  Entry             : TXMLNode;
+  sFile             : String;
+  I, j              : Integer;
+  sName             : String;
+Begin
+  AdvMemo1.Lines.Add(GetInstance);
+
+End;
+
+Procedure TfDash.Button2Click(Sender: TObject);
+Var
+  pUpload           : tLogUpLoad;
+  aResult           : ISuperObject;
+Begin
+  pUpload := tLogUpLoad.create('127.0.0.1', 8888);
+  pUpload.url := 'http://backup.sherpagreenock.be/test.php';
+  aResult := pUpload.upload(AdvMemo1.Lines.Text);
+  AdvMemo1.Lines.Add(aResult.AsJSON(True));
+End;
+
+Procedure TfDash.FormCloseQuery(Sender: TObject; Var CanClose: Boolean);
+Begin
+  CanClose := bCanClose;
+End;
+
+Procedure TfDash.FormCreate(Sender: TObject);
+Begin
+  bCanClose := True;
+  If trim(sConfig) <> '' Then
+  Begin
+
+  End;
+
+  If bAuto Then
+  Begin
+    MakeArchive(sConfig);
+    Application.Terminate;
+  End;
+
+  If Not bSilent Then
+  Begin
+    sgEntries.DefaultColWidth := 550;
+    sgEntries.DefaultRowHeight := 100;
+    stp1.ActivePageIndex := 0;
+    (*
+    sgentries.Cells[0, 0] := '<CONTROL TYPE="CHECK" WIDTH="15" ID="CK1"> <b>Patient information</b> :<BR>' +
+      'Name : <CONTROL TYPE="EDIT" WIDTH="80" VALUE="" ID="ED1"> ' +
+      'Prename : <CONTROL TYPE="EDIT" WIDTH="80" VALUE="" ID="ED2"> ' +
+      '<CONTROL TYPE="BUTTON" WIDTH="80" VALUE="Clear" ID="BTN1"><BR><BR>' +
+      '<IMG src="idx:0" align="middle"> Available : <CONTROL TYPE="COMBO" WIDTH="60" ID="CO1">  ' +
+      '<IMG src="idx:1" align="middle"> Payment : <CONTROL TYPE="COMBO" WIDTH="80" VALUE="" ID="CO2"> ' +
+      '<IMG src="idx:2" align="middle"> Last visit : <CONTROL TYPE="EDIT" WIDTH="80" VALUE="" ID="ED3">';*)
+    Show;
+  End;
+End;
+
+End.
+

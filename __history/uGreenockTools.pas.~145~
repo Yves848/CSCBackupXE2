@@ -1,0 +1,203 @@
+Unit uGreenockTools;
+
+Interface
+Uses
+  System.SysUtils,
+  System.Classes,
+  FireDAC.Stan.Intf, FireDAC.Stan.Option,
+  FireDAC.Stan.Error, FireDAC.UI.Intf, FireDAC.Phys.Intf, FireDAC.Stan.Def, FireDAC.Stan.Pool, FireDAC.Stan.Async, FireDAC.Phys, FireDAC.Phys.MSSQL,
+  FireDAC.Phys.MSSQLDef, FireDAC.VCLUI.Wait, Data.DB, FireDAC.Comp.Client, FireDAC.DApt, XSuperObject, XML.Verysimple,IdBaseComponent,
+  IdComponent, IdTCPConnection, IdTCPClient, IdHTTP;
+Const
+  LUSFile           = '\Corilus\UpdateServices\Data\LUS\GKP.info';
+  ConfigFile        = '\Corilus\Common\Config\ConnectionStrings.config';
+  LogDir            = 'Logs\';
+  TempDir           = 'Temp\';
+
+{$IFDEF DEBUG}
+  LogUploadUrl      = 'http://localhost:8080/Dash/SaveLog.php';
+{$ELSE}
+  LogUploadUrl      = 'http://backup.sherpagreenock.be/SaveLog.php';
+{$ENDIF}
+Type
+
+  tGreenockInfos = Class(tObject)
+  private
+    fVersion: String;
+    fPatch: String;
+    fServer: String;
+    fUserName: String;
+    fPassword: String;
+    fDriverId: String;
+    fDatabase: String;
+    fApb: String;
+    fConnected: boolean;
+    fdGO: TFDConnection;
+    qVersion: TFDQuery;
+    fStatus: String;
+    Function GetApb: String;
+    Procedure SetApb(value: String);
+  public
+    Constructor create(pServer: String = 'localhost\sqlserver';
+      pUserName: String = 'CorilusRD';
+      pPassword: String = 'Letmein2302';
+      pDriverID: String = 'MSSQL';
+      pDatabase: String = 'Greenock');
+    Procedure Close;
+    Property Version: String read fVersion write fVersion;
+    Property Patch: String read fPatch write fPatch;
+    Property Connected: boolean read fConnected write fConnected;
+    Property Status: String read fStatus write fStatus;
+    Property Apb: String read GetApb write SetApb;
+    Function GetInfos(sApb : String): IsuperObject;
+
+  End;
+
+Function GetInstance: String;
+
+Var
+  bExtract          : boolean;
+  bSilent           : boolean;
+  bAuto             : boolean;
+  sConfig           : String;
+
+Implementation
+Uses
+  uToolCompress;
+
+Function GetInstance: String;
+Var
+  XML               : TXmlVerySimple;
+  Node              : TXMLNode;
+  SubNode           : TXMLNode;
+  Entry             : TXMLNode;
+  sFile             : String;
+  I, j              : Integer;
+  sName             : String;
+  sList             : tStrings;
+Begin
+  sFile := ExpandEnvVars('%programdata%') + ConfigFile;
+  XML := TXmlVerySimple.create;
+  XML.LoadFromFile(sFile);
+  Node := XML.DocumentElement.Find('lastLocalizations');
+  I := 0;
+  result := '';
+  While I <= Node.ChildNodes.Count - 1 Do
+  Begin
+    SubNode := Node.ChildNodes[I];
+    sName := SubNode.Attributes['name'];
+    If Uppercase(sName) = 'GREENOCK' Then
+    Begin
+      SubNode := SubNode.Find('value');
+      sName := sName + '_' + SubNode.Text;
+      SubNode := XML.DocumentElement.Find('bootStrapData');
+      j := 0;
+      While j <= SubNode.ChildNodes.Count - 1 Do
+      Begin
+        Entry := SubNode.ChildNodes[j];
+        If Uppercase(Entry.Attributes['name']) = Uppercase(sName) Then
+        Begin
+          sList := Splitstring(Entry.Attributes['connectionString'],';');
+          j := 0;
+          while j <= sList.Count -1 do
+          begin
+             if pos('Data Source=',sList[j]) > 0 then
+             begin
+                result := copy(sList[j],13,length(sList[j])-12);
+                j := sList.Count;
+             end;
+             inc(j);
+          end;
+          j := SubNode.ChildNodes.Count;
+        End;
+        inc(j);
+      End;
+      i := Node.ChildNodes.Count;
+    End;
+    inc(I);
+  End;
+  XML.Free;
+End;
+
+Function tGreenockInfos.GetApb: String;
+var
+  DefaultDir : String;
+  jAPB : ISuperObject;
+  sAPB : String;
+Begin
+  (*
+  qApb := TFDQuery.create(Nil);
+  qApb.Connection := fdGO;
+  qApb.SQL.Clear;
+  qApb.SQL.Text := 'SELECT PharmApbNr,actorName FROM Actor.Pharmacies join actor.actors on Pharmacies.PharmID = Actors.ActorID';
+  qApb.Open;
+  result := qApb.FieldByName('PharmApbNr').AsString;
+  qApb.Close;
+  qApb.Free;
+  *)
+  DefaultDir := IncludeTrailingPathDelimiter(ExtractFileDir(PAramstr(0)));
+  jAPB := TSuperObject.ParseFile(DefaultDir+'APB.JSON');
+  sAPB := jAPB.S['APB'];
+  result := sAPB;
+End;
+
+Function tGreenockInfos.GetInfos(sApb : String): IsuperObject;
+Var
+   JsonToSend: TStringStream;
+   response : String;
+   IdHTTP1 : tIdHTTP;
+   X : ISuperObject;
+Begin
+   IdHTTP1 := tIdHTTP.Create(Nil);
+   IdHTTP1.Request.ContentType := 'application/json';
+   IdHTTP1.Request.AcceptCharSet := 'utf-8,iso-8859-1';
+   jsontoSend := tStringStream.Create;
+   IdHTTP1.Get('http://sherpa.greenock.be/API/pharmacy.php?APB='+sApb,JsonToSend);
+   X := tSuperObject.ParseStream(jsontosend);
+end;
+
+Procedure tGreenockInfos.SetApb(value: String);
+Begin
+
+End;
+
+Procedure tGreenockInfos.Close;
+Begin
+  If assigned(fdGO) Then
+    fdGO.Close;
+End;
+
+Constructor tGreenockInfos.create(pServer: String; pUserName: String; pPassword: String; pDriverID: String; pDatabase: String);
+Var
+  sGO               : IsuperObject;
+Begin
+  Inherited create;
+  if pServer = '' then
+     pServer := GetInstance;
+
+  sGO := GetGOProperties;
+  Version := sGO.S['version'];
+  Patch := sGO.S['patch'];
+  (*
+  fdGO := TFDConnection.create(Nil);
+  fdGO.Params.AddPair('SERVER', pServer);
+  fdGO.Params.AddPair('User_Name', pUserName);
+  fdGO.Params.AddPair('Password', pPassword);
+  fdGO.Params.AddPair('DriverID', pDriverID);
+  fdGO.Params.AddPair('Database', pDatabase);
+  Connected := False;
+  Try
+    fdGO.Open;
+    Connected := fdGO.Connected;
+  Except
+    On e: exception Do
+    Begin
+      Status := e.Message;
+    End;
+
+  End; *)
+End;
+
+
+End.
+

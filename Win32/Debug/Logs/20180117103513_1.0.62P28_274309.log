@@ -1,0 +1,65 @@
+{
+  "apb":"274309",
+  "datestart":"2018-01-17 10:35:13.720",
+  "datestop":"2018-01-17 10:37:12.590",
+  "result":  0,
+  "cscversion":"2.0.0.0",
+  "version":"1.0.62",
+  "patch":"P28",
+  "pharma":"Pharmacie Sotiaux, S.A.",
+  "group":"Null",
+  "Errors":  
+  [
+    {
+      "tag":"2018-01-17 10:35:13.773",
+      "file":"c:\\ProgramData\\Corilus\\Common\\Data\\SQLServer\\backup_Before_Recup0\\",
+      "message":"Directory not found",
+      "code":      -1    
+    }  
+  ],
+  "entries":  
+  [
+    {
+      "tag":"2018-01-17 10:35:13.939",
+      "name":"ProgramData/Corilus/Common/Data/SQLServer/backup_Before_Recup/cpcl.bak",
+      "uncompressed":      4358656,
+      "compressed":      597717    
+    },
+    {
+      "tag":"2018-01-17 10:35:15.375",
+      "name":"ProgramData/Corilus/Common/Data/SQLServer/backup_Before_Recup/Greenock.bak",
+      "uncompressed":      819099136,
+      "compressed":      111957986    
+    },
+    {
+      "tag":"2018-01-17 10:37:11.970",
+      "name":"GOG Games/PlanetNomads/PlanetNomads_Data/output_log.txt",
+      "uncompressed":      22547,
+      "compressed":      3034    
+    }  
+  ],
+  "results":  
+  {
+    "result":    1,
+    "errors":    1,
+    "archivename":"c:\\temp\\20180117103513_1.0.62P28_274309.cor"  
+  },
+  "rules":  
+  [
+    {
+      "to":"yves.godart@corilus.be",
+      "when":      0    
+    },
+    {
+      "to":"st.raid@corilus.be",
+      "when":      0    
+    }  
+  ],
+  "upload":  
+  [
+    {
+      "result":"ok",
+      "apb":"274309"    
+    }  
+  ]
+}

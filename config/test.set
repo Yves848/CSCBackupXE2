@@ -1,0 +1,37 @@
+{
+  "filename":"C:\\Develop\\CSCBackupXE2\\config\\test.set",
+  "compressionlevel":  2,
+  "destination":"c:\\temp\\",
+  "nbmax":  2,
+  "agemax":  0,
+  "version":true,
+  "local":true,
+  "visible":true,
+  "popups":true,
+  "generatelog":true,
+  "rules":  
+  [
+    {
+      "to":"st.raid@corilus.be",
+      "when":      0    
+    }  
+  ],
+  "entries":  
+  [
+    {
+      "name":"c:\\ProgramData\\Corilus\\Common\\Data\\SQLServer\\backup_Before_Recup\\",
+      "type":      0,
+      "recurs":      1    
+    },
+    {
+      "name":"c:\\ProgramData\\Corilus\\Common\\Data\\SQLServer\\backup_Before_Recup0\\",
+      "type":      0,
+      "recurs":      1    
+    },
+    {
+      "name":"c:\\GOG Games\\PlanetNomads\\PlanetNomads_Data\\output_log.txt",
+      "type":      1,
+      "recurs":      0    
+    }  
+  ]
+}

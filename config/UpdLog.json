@@ -1,0 +1,17 @@
+{
+    "apb": 101010,
+    "pharmacyname": "test",
+    "dateupdate": "2017-11-28 12:00:00.000",
+    "updbackup": "2.0.0.6",
+    "cscversionbefore": "none",
+    "cscversionafter": "2.0.0.0",
+    "result": 0,
+    "entries":
+    [
+        {
+            "tag": "2017-11-28 12:00:00.001",
+            "line":"",
+            "type": 0
+        }
+    ]
+}

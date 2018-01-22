@@ -1,0 +1,13 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<BorlandProject>
+	<Transactions>
+    <Transaction>2018/01/16 11:33:24.000.981,=C:\Users\yves.godart\Documents\Embarcadero\Studio\Projets\Unit2.pas</Transaction>
+    <Transaction>2018/01/16 11:34:41.000.865,C:\Users\yves.godart\Documents\Embarcadero\Studio\Projets\Unit2.dfm=C:\Users\yves.godart\Documents\Embarcadero\Studio\Projets\uTestAPI.dfm</Transaction>
+    <Transaction>2018/01/16 11:34:41.000.865,C:\Users\yves.godart\Documents\Embarcadero\Studio\Projets\Unit2.pas=C:\Users\yves.godart\Documents\Embarcadero\Studio\Projets\uTestAPI.pas</Transaction>
+    <Transaction>2018/01/16 11:35:15.000.059,C:\Users\yves.godart\Documents\Embarcadero\Studio\Projets\Project2.dproj=C:\Develop\CSCBackupXE2\REST API\TestAPI.dproj</Transaction>
+    <Transaction>2018/01/16 11:35:42.000.480,C:\Users\yves.godart\Documents\Embarcadero\Studio\Projets\uTestAPI.dfm=C:\Develop\CSCBackupXE2\REST API\uTestAPI.dfm</Transaction>
+    <Transaction>2018/01/16 11:35:42.000.480,C:\Users\yves.godart\Documents\Embarcadero\Studio\Projets\uTestAPI.pas=C:\Develop\CSCBackupXE2\REST API\uTestAPI.pas</Transaction>
+    <Transaction>2018/01/16 11:39:57.000.148,=C:\Develop\CSCBackupXE2\XSuperObject.pas</Transaction>
+    <Transaction>2018/01/16 11:40:11.000.893,=C:\Develop\CSCBackupXE2\XSuperJSON.pas</Transaction>
+  </Transactions>
+</BorlandProject>

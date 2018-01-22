@@ -1,0 +1,60 @@
+﻿<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+    <PropertyGroup>
+        <ProjectGuid>{FF175964-A20D-47D4-A0CD-DD9D276AA6C5}</ProjectGuid>
+    </PropertyGroup>
+    <ItemGroup>
+        <Projects Include="CSCBackupXE.dproj">
+            <Dependencies/>
+        </Projects>
+        <Projects Include="UpdateCSC\UpdBackup.dproj">
+            <Dependencies/>
+        </Projects>
+        <Projects Include="REST API\TestAPI.dproj">
+            <Dependencies/>
+        </Projects>
+    </ItemGroup>
+    <ProjectExtensions>
+        <Borland.Personality>Default.Personality.12</Borland.Personality>
+        <Borland.ProjectType/>
+        <BorlandProject>
+            <Default.Personality/>
+        </BorlandProject>
+    </ProjectExtensions>
+    <Target Name="CSCBackupXE">
+        <MSBuild Projects="CSCBackupXE.dproj"/>
+    </Target>
+    <Target Name="CSCBackupXE:Clean">
+        <MSBuild Projects="CSCBackupXE.dproj" Targets="Clean"/>
+    </Target>
+    <Target Name="CSCBackupXE:Make">
+        <MSBuild Projects="CSCBackupXE.dproj" Targets="Make"/>
+    </Target>
+    <Target Name="UpdBackup">
+        <MSBuild Projects="UpdateCSC\UpdBackup.dproj"/>
+    </Target>
+    <Target Name="UpdBackup:Clean">
+        <MSBuild Projects="UpdateCSC\UpdBackup.dproj" Targets="Clean"/>
+    </Target>
+    <Target Name="UpdBackup:Make">
+        <MSBuild Projects="UpdateCSC\UpdBackup.dproj" Targets="Make"/>
+    </Target>
+    <Target Name="TestAPI">
+        <MSBuild Projects="REST API\TestAPI.dproj"/>
+    </Target>
+    <Target Name="TestAPI:Clean">
+        <MSBuild Projects="REST API\TestAPI.dproj" Targets="Clean"/>
+    </Target>
+    <Target Name="TestAPI:Make">
+        <MSBuild Projects="REST API\TestAPI.dproj" Targets="Make"/>
+    </Target>
+    <Target Name="Build">
+        <CallTarget Targets="CSCBackupXE;UpdBackup;TestAPI"/>
+    </Target>
+    <Target Name="Clean">
+        <CallTarget Targets="CSCBackupXE:Clean;UpdBackup:Clean;TestAPI:Clean"/>
+    </Target>
+    <Target Name="Make">
+        <CallTarget Targets="CSCBackupXE:Make;UpdBackup:Make;TestAPI:Make"/>
+    </Target>
+    <Import Project="$(BDS)\Bin\CodeGear.Group.Targets" Condition="Exists('$(BDS)\Bin\CodeGear.Group.Targets')"/>
+</Project>

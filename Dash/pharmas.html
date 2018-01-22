@@ -1,0 +1,63 @@
+<div class="container-fluid" ng-controller="PharmaController as $ctrl">
+    <div class="modal-result">
+        <script type="text/ng-template" id="modalresult.html">
+            <div class="modal-header">
+                <h3 class="modal-title" id="modal-title">Confirmation.</h3>
+            </div>
+
+            <div class="modal-body" id="modal-body">
+                Confirm cleaning for pharmacy {{apb}} ?
+            </div>
+
+            <div class="modal-footer">
+                <button class="btn btn-primary" type="button" ng-click="$ctrl.ok()">Ok</button>
+                <button class="btn btn-danger" type="button" ng-click="$ctrl.cancel()">Cancel</button>
+            </div>
+
+        </script>
+    </div>
+
+    <h2>Pharmacies</h2>
+    <br>
+    <div class="col-lg-1">
+        <button type="button" class="btn btn-info" ng-click="clickAPB('')">Toutes</button>
+    </div>
+    <div class="col-lg-4">
+        <form class="form-inline">
+            <div class="form-group">
+                <label>Search </label>
+                <input type="text" ng-model="search" class="form-control" placeholder="Search">
+            </div>
+
+        </form>
+    </div>
+
+
+    <table class="table table-stripped table-hover">
+        <thead>
+        <tr>
+            <td>APB</td>
+            <td>Name</td>
+            <td>Version</td>
+        </tr>
+        </thead>
+        <tbody>
+        <tr dir-paginate="pharma in pharmas|filter:search|itemsPerPage:15">
+            <td ng-click="clickAPB(pharma.apb)">{{pharma.apb}} &nbsp <span class="badge">{{pharma.count}}</span></td>
+            <td>{{pharma.nom}}</td>
+            <td>{{pharma.version}}</td>
+            <td>
+
+                <button class="btn btn-sm btn-block btn-warning" ng-click="$ctrl.open(pharma.apb,'sm')">CLEAN</button>
+
+            </td>
+        </tr>
+        </tbody>
+    </table>
+    <dir-pagination-controls
+            max-size="15"
+            direction-links="true"
+            boundary-links="true">
+    </dir-pagination-controls>
+
+</div>

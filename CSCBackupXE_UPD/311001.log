@@ -1,0 +1,41 @@
+[16:11:54.271] Creating Temporary Folder C:\Users\Lenovo\AppData\Local\Temp\Corilus_BackupXE\
+[16:11:54.272] Creating Undo Folder C:\Users\Lenovo\AppData\Local\Temp\Corilus_BackupXE\Undo\
+[16:11:55.652] Undo file generated at [C:\Users\Lenovo\AppData\Local\Temp\Corilus_BackupXE\Undo\Old.zip]
+[16:11:57.482] Process OPSWBACKUP.EXE is not running
+[16:11:57.485] Process CSCBACKUPXE.EXE is not running
+[16:11:57.498] Extracting [C:\Users\Lenovo\AppData\Local\Temp\Corilus_BackupXE\CSCXE.zip]
+[16:11:57.500] Decompression
+[16:11:57.500] Zip content : 
+[16:11:57.500]   - ChangeLog.txt [1272] -> [2861] CRC : 247919733
+[16:11:57.501]   - CSCBackupXE.exe [3884274] -> [7442944] CRC : -728796805
+[16:11:57.892] Deleting Zip file
+[16:11:57.892] Directory [C:\corilus_backup\] found.  Renaming to [C:\corilus_backup_Old\]
+[16:11:58.952] Creating new directory [C:\corilus_backup\]
+[16:11:58.952] Start searching for .bat files in [C:\corilus_backup_Old\]
+[16:11:58.953] File [C:\corilus_backup_Old\Backup_MD.bat] found
+[16:11:58.953] File [C:\corilus_backup_Old\Greenock_FullHD.bat] found
+[16:11:58.953] File [C:\corilus_backup_Old\Greenock_LogHD.bat] found
+[16:11:58.953]    Loading [C:\corilus_backup_Old\Backup_MD.bat] file
+[16:11:58.954]       Searching for "opswbackup.exe" in batch file
+[16:11:58.954]    Saving new batch [C:\corilus_backup\Backup_MD.bat]
+[16:11:58.957]    Loading [C:\corilus_backup_Old\Greenock_FullHD.bat] file
+[16:11:58.958]       Searching for "opswbackup.exe" in batch file
+[16:11:58.958]       ** found **
+[16:11:58.958]          Converting "C:\corilus_backup\opswbackup.exe C:\corilus_backup\Greenock_FullHD.set" to "C:\corilus_backup\CSCBackupXE.exe /config="C:\corilus_backup\Greenock_FullHD.xml" /auto"
+[16:11:58.958]    Saving new batch [C:\corilus_backup\Greenock_FullHD.bat]
+[16:11:58.968]    Loading [C:\corilus_backup_Old\Greenock_LogHD.bat] file
+[16:11:58.969]       Searching for "opswbackup.exe" in batch file
+[16:11:58.969]       ** found **
+[16:11:58.969]          Converting "C:\corilus_backup\opswbackup.exe C:\corilus_backup\Greenock_LogHD.set" to "C:\corilus_backup\CSCBackupXE.exe /config="C:\corilus_backup\Greenock_LogHD.xml" /auto"
+[16:11:58.970]    Saving new batch [C:\corilus_backup\Greenock_LogHD.bat]
+[16:11:58.978] Start searching for .set files in [C:\corilus_backup_Old\]
+[16:11:58.979] File [C:\corilus_backup_Old\Greenock_FullHD.set] found
+[16:11:58.979] File [C:\corilus_backup_Old\Greenock_LogHD.set] found
+[16:11:58.979]    Loading [C:\corilus_backup_Old\Greenock_FullHD.set] file
+[16:11:58.991]    Saving [C:\corilus_backup\Greenock_FullHD.xml] file
+[16:11:58.991]    Loading [C:\corilus_backup_Old\Greenock_LogHD.set] file
+[16:11:59.005]    Saving [C:\corilus_backup\Greenock_LogHD.xml] file
+[16:11:59.017] C:\Users\Lenovo\AppData\Local\Temp\Corilus_BackupXE\ChangeLog.txt ==> C:\corilus_backup\ChangeLog.txt
+[16:11:59.257] C:\Users\Lenovo\AppData\Local\Temp\Corilus_BackupXE\CSCBackupXE.exe ==> C:\corilus_backup\CSCBackupXE.exe
+[16:11:59.258] C:\Users\Lenovo\AppData\Local\Temp\Corilus_BackupXE\Undo ==> C:\corilus_backup\Undo
+[16:11:59.278] ** Update successefully terminated **

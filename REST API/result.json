@@ -1,0 +1,20 @@
+{
+  "Pharmacy":  
+  [
+    {
+      "PharmApbNr":"251410",
+      "InamirizvNr":"21153423001",
+      "LangCode":"*",
+      "ActorName":"Pharmacie Servais Braine-l'Alleud",
+      "Address":"Chauss\u00e9e d'Alsemberg 577",
+      "PostalCode":"Null",
+      "PlaceLabel":"Null",
+      "PhoneNr":"02 386 45 00",
+      "Email":"braine@pharmacieservais.be",
+      "TitulName":"Chiavetta Adrien",
+      "GroupType":"Servais",
+      "MigrDate":"26/02/12 02:24:30",
+      "LastUpdate":"2018-01-16 11:02:56"    
+    }  
+  ]
+}   

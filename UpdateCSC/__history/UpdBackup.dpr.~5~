@@ -1,0 +1,26 @@
+program UpdBackup;
+
+{$R 'gzip.res' 'gzip.rc'}
+
+uses
+  Vcl.Forms,
+  uMain in 'uMain.pas' {fUpdBAckup},
+  uLib in 'uLib.pas',
+  Vcl.Themes,
+  Vcl.Styles,
+  PhToolsStr in '..\PhToolsStr.pas',
+  phMath in '..\phMath.pas',
+  uEncryption in '..\uEncryption.pas',
+  Xml.VerySimple in '..\..\tools\VerysimpleXML\Source\Xml.VerySimple.pas',
+  uRecords in '..\uRecords.pas';
+
+{$R *.res}
+
+begin
+  Application.Initialize;
+  Application.ShowMainForm := False;
+  Application.MainFormOnTaskbar := True;
+  TStyleManager.TrySetStyle('Windows10 Dark');
+  Application.CreateForm(TfUpdBAckup, fUpdBAckup);
+  Application.Run;
+end.

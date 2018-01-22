@@ -1,0 +1,47 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<BorlandProject>
+	<Transactions>
+    <Transaction>2017/11/14 14:14:41.000.749,=C:\Users\yves.godart\Documents\Embarcadero\Studio\Projets\Unit2.pas</Transaction>
+    <Transaction>2017/11/14 14:15:18.000.872,C:\Users\yves.godart\Documents\Embarcadero\Studio\Projets\Unit2.dfm=C:\Develop\CSCBackupXE2\uDashBoard.dfm</Transaction>
+    <Transaction>2017/11/14 14:15:18.000.872,C:\Users\yves.godart\Documents\Embarcadero\Studio\Projets\Unit2.pas=C:\Develop\CSCBackupXE2\uDashBoard.pas</Transaction>
+    <Transaction>2017/11/14 14:15:25.000.648,C:\Users\yves.godart\Documents\Embarcadero\Studio\Projets\Project2.dproj=C:\Develop\CSCBackupXE2\CSCBackupXE.dproj</Transaction>
+    <Transaction>2017/11/15 10:06:09.000.344,=C:\Develop\CSCBackupXE2\gzip.rc</Transaction>
+    <Transaction>2017/11/15 10:08:18.000.383,=C:\Develop\CSCBackupXE2\Unit1.pas</Transaction>
+    <Transaction>2017/11/15 21:29:16.000.072,=C:\Develop\CSCBackupXE2\backupUtils.pas</Transaction>
+    <Transaction>2017/11/15 21:35:24.000.239,C:\Develop\CSCBackupXE2\backupUtils.pas=</Transaction>
+    <Transaction>2017/11/16 11:08:01.000.164,=C:\Develop\CSCBackupXE2\Unit2.pas</Transaction>
+    <Transaction>2017/11/16 11:08:11.000.126,C:\Develop\CSCBackupXE2\Unit2.pas=C:\Develop\CSCBackupXE2\uGreenockTools.pas</Transaction>
+    <Transaction>2017/11/16 14:03:38.000.052,=C:\Develop\CSCBackupXE2\Unit2.pas</Transaction>
+    <Transaction>2017/11/16 14:07:32.000.950,C:\Develop\CSCBackupXE2\Unit2.pas=C:\Develop\CSCBackupXE2\uProgress.pas</Transaction>
+    <Transaction>2017/11/16 14:07:32.000.950,C:\Develop\CSCBackupXE2\Unit2.dfm=C:\Develop\CSCBackupXE2\uProgress.dfm</Transaction>
+    <Transaction>2017/11/17 08:39:59.000.786,=C:\Develop\CSCBackupXE2\uToolCompress.pas</Transaction>
+    <Transaction>2017/11/21 16:01:07.000.739,=C:\Develop\CSCBackupXE2\Unit2.pas</Transaction>
+    <Transaction>2017/11/21 16:01:14.000.317,C:\Develop\CSCBackupXE2\Unit2.pas=C:\Develop\CSCBackupXE2\uHTTPTools.pas</Transaction>
+    <Transaction>2017/11/27 15:42:20.000.996,=C:\Develop\CSCBackupXE2\uMain.pas</Transaction>
+    <Transaction>2018/01/16 15:55:46.000.750,=C:\Develop\CSCBackupXE2\UpdateCSC\uversion.pas</Transaction>
+    <Transaction>2018/01/16 15:57:23.000.445,C:\Develop\CSCBackupXE2\UpdateCSC\uversion.pas=</Transaction>
+    <Transaction>2018/01/16 15:57:34.000.560,=C:\Develop\CSCBackupXE2\UpdateCSC\uversion.pas</Transaction>
+    <Transaction>2018/01/16 15:59:15.000.790,C:\Develop\CSCBackupXE2\UpdateCSC\uversion.pas=</Transaction>
+    <Transaction>2018/01/16 20:18:51.000.213,C:\Develop\CSCBackupXE2\Unit1.dfm=C:\Develop\CSCBackupXE2\uMenu.dfm</Transaction>
+    <Transaction>2018/01/16 20:18:51.000.213,C:\Develop\CSCBackupXE2\Unit1.pas=C:\Develop\CSCBackupXE2\uMenu.pas</Transaction>
+    <Transaction>2018/01/16 20:20:41.000.721,=C:\Develop\CSCBackupXE2\Unit3.pas</Transaction>
+    <Transaction>2018/01/16 20:20:56.000.400,C:\Develop\CSCBackupXE2\Unit3.pas=C:\Develop\CSCBackupXE2\uAddEntry.pas</Transaction>
+    <Transaction>2018/01/16 20:20:56.000.400,C:\Develop\CSCBackupXE2\Unit3.dfm=C:\Develop\CSCBackupXE2\uAddEntry.dfm</Transaction>
+  </Transactions>
+	<ProjectSortOrder AutoSort="0" SortType="0">
+    <File Path="gzip.rc"/>
+    <File Path="uDashBoard.pas"/>
+    <File Path="uDashBoard.dfm"/>
+    <File Path="uGreenockTools.pas"/>
+    <File Path="uHTTPTools.pas"/>
+    <File Path="uMain.pas"/>
+    <File Path="uMain.dfm"/>
+    <File Path="uMenu.pas"/>
+    <File Path="uMenu.dfm"/>
+    <File Path="uProgress.pas"/>
+    <File Path="uProgress.dfm"/>
+    <File Path="uToolCompress.pas"/>
+    <File Path="uAddEntry.pas"/>
+    <File Path="uAddEntry.dfm"/>
+  </ProjectSortOrder>
+</BorlandProject>

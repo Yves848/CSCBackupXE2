@@ -1,0 +1,58 @@
+Unit uHTTPTools;
+
+Interface
+Uses
+  System.Classes,
+  Sysutils,
+  IdBaseComponent,
+  IdComponent, IdTCPConnection, IdTCPClient, IdHTTP,XSuperObject;
+
+Type
+  tLogUpLoad = Class(tObject)
+  private
+    IdHTTP1: tIdHTTP;
+  public
+    url: String;
+    JSONString: String;
+    Constructor create(Proxyserver : String = ''; Proxyport : Integer = 0);
+    Function upload(sJSON: String): ISuperObject;
+  End;
+Implementation
+
+Function StringToStream(const AString: string): TStringStream;
+begin
+  Result := TStringStream.Create(AString);
+end;
+
+constructor tLogUpLoad.create(Proxyserver : String = ''; Proxyport : Integer = 0);
+begin
+    IdHTTP1 := tIdHTTP.Create(Nil);
+    if trim(proxyServer) <> '' then
+    begin
+       IdHttp1.ProxyParams.ProxyServer := ProxyServer;
+       IdHttp1.ProxyParams.ProxyPort := ProxyPort;
+    end;
+end;
+
+function tLogUpLoad.upload(sJSON : String) : ISuperObject;
+var
+   JsonToSend: TStringStream;
+   response : String;
+begin
+   JsonToSend := TStringStream.Create(sJSON, TEncoding.UTF8);
+   IdHTTP1.Request.ContentType := 'application/json';
+   try
+      response := IdHTTP1.Post(url,JsonToSend);
+      result := tSuperObject.ParseStream(StringToStream(response));
+   except
+      on e: Exception do
+      begin
+        result := SO;
+        result.S['result'] := 'ko';
+        result.S['error'] := Utf8ToAnsi(e.Message);
+      end;
+   end;
+end;
+
+End.
+

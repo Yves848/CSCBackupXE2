@@ -1,0 +1,11 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<BorlandProject>
+	<Transactions>
+    <Transaction>2017/11/15 10:35:37.000.340,C:\Users\yves.godart\Documents\Embarcadero\Studio\Projets\Project2.dproj=C:\Develop\CSCBackupXE2\CDCBackupDll.dproj</Transaction>
+    <Transaction>2017/11/15 10:49:25.000.115,C:\Develop\CSCBackupXE2\CDCBackupDll.dproj=C:\Develop\CSCBackupXE2\CSCBackupDll.dproj</Transaction>
+    <Transaction>2017/11/15 14:44:58.000.415,=C:\Develop\CSCBackupXE2\Unit2.pas</Transaction>
+    <Transaction>2017/11/15 14:45:05.000.775,C:\Develop\CSCBackupXE2\Unit2.pas=C:\Develop\CSCBackupXE2\UVar.pas</Transaction>
+    <Transaction>2017/11/15 22:33:38.000.165,=C:\Develop\CSCBackupXE2\Unit2.pas</Transaction>
+    <Transaction>2017/11/15 22:34:15.000.617,C:\Develop\CSCBackupXE2\Unit2.pas=C:\Develop\CSCBackupXE2\uToolCompress.pas</Transaction>
+  </Transactions>
+</BorlandProject>

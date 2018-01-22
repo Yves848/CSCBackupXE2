@@ -1,0 +1,13 @@
+[10:51:40.182] Undo file generated at [C:\Users\yves.godart\AppData\Local\Temp\Corilus_BackupXE\Undo\Old.zip]
+[10:51:42.161] Process OPSWBACKUP.EXE is not running
+[10:51:42.170] Process CSCBACKUPXE.EXE is not running
+[10:51:42.180] Extracting [C:\Users\yves.godart\AppData\Local\Temp\Corilus_BackupXE\CSCXE.zip]
+[10:51:42.182] Decompression
+[10:51:42.183] Zip content : 
+[10:51:42.186]   - ChangeLog.txt [1014] -> [2298] CRC : 1777938583
+[10:51:42.188]   - CSCBackupXE.exe [3654996] -> [7082496] CRC : 1928385867
+[10:51:42.558] Deleting Zip file
+[10:51:42.566] C:\Users\yves.godart\AppData\Local\Temp\Corilus_BackupXE\ChangeLog.txt ==> C:\corilus_backup\ChangeLog.txt
+[10:51:42.579] C:\Users\yves.godart\AppData\Local\Temp\Corilus_BackupXE\CSCBackupXE.exe ==> C:\corilus_backup\CSCBackupXE.exe
+[10:51:42.582] C:\Users\yves.godart\AppData\Local\Temp\Corilus_BackupXE\Undo ==> C:\corilus_backup\Undo
+[10:51:42.793] ** Update successefully terminated **

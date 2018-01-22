@@ -1,0 +1,59 @@
+{
+  "apb":"274309",
+  "datestart":"2018-01-16 16:20:18.108",
+  "datestop":"2018-01-16 16:22:36.756",
+  "result":  0,
+  "cscversion":"2.0.2.1",
+  "version":"1.0.62",
+  "patch":"P28",
+  "pharma":"Pharmacie Sotiaux, S.A.",
+  "group":"Null",
+  "Errors":  
+  [
+    {
+      "tag":"2018-01-16 16:20:18.198",
+      "file":"c:\\ProgramData\\Corilus\\Common\\Data\\SQLServer\\backup_Before_Recup0\\",
+      "message":"Directory not found",
+      "code":      -1    
+    }  
+  ],
+  "entries":  
+  [
+    {
+      "tag":"2018-01-16 16:20:18.423",
+      "name":"ProgramData/Corilus/Common/Data/SQLServer/backup_Before_Recup/cpcl.bak",
+      "uncompressed":      4357632,
+      "compressed":      597310    
+    },
+    {
+      "tag":"2018-01-16 16:20:20.439",
+      "name":"ProgramData/Corilus/Common/Data/SQLServer/backup_Before_Recup/Greenock.bak",
+      "uncompressed":      766621184,
+      "compressed":      107635203    
+    }  
+  ],
+  "results":  
+  {
+    "result":    1,
+    "errors":    1,
+    "archivename":"c:\\temp\\20180116162018_1.0.62P28_274309.cor"  
+  },
+  "rules":  
+  [
+    {
+      "to":"yves.godart@corilus.be",
+      "when":      0    
+    },
+    {
+      "to":"st.raid@corilus.be",
+      "when":      0    
+    }  
+  ],
+  "upload":  
+  [
+    {
+      "result":"ok",
+      "apb":"274309"    
+    }  
+  ]
+}

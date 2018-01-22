@@ -1,0 +1,47 @@
+unit uTestAPI;
+
+interface
+
+uses
+  Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
+  Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.StdCtrls, AdvMemo, advmjson,IdBaseComponent,
+  IdComponent, IdTCPConnection, IdTCPClient, IdHTTP, XSuperObject;
+
+type
+  TForm2 = class(TForm)
+    eLink: TEdit;
+    AdvMemo1: TAdvMemo;
+    AdvJSONMemoStyler1: TAdvJSONMemoStyler;
+    btnGet: TButton;
+    procedure btnGetClick(Sender: TObject);
+  private
+    { Déclarations privées }
+  public
+    { Déclarations publiques }
+  end;
+
+var
+  Form2: TForm2;
+
+implementation
+
+{$R *.dfm}
+
+procedure TForm2.btnGetClick(Sender: TObject);
+var
+   JsonToSend: TStringStream;
+   response : String;
+   IdHTTP1 : tIdHTTP;
+   X : ISuperObject;
+begin
+   IdHTTP1 := tIdHTTP.Create(Nil);
+   IdHTTP1.Request.ContentType := 'application/json';
+   IdHTTP1.Request.AcceptCharSet := 'utf-8,iso-8859-1';
+   jsontoSend := tStringStream.Create;
+   IdHTTP1.Get(eLink.Text,JsonToSend);
+   X := tSuperObject.ParseStream(jsontosend);
+   //AdvMemo1.Lines.Text := X.AsJSON(true);
+   AdvMemo1.Lines.Add(X.A['Pharmacy'].O[0].S['ActorName']);
+end;
+
+end.

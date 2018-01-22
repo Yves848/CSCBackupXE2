@@ -1,0 +1,28 @@
+unit uProgress;
+
+interface
+
+uses
+  Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
+  Vcl.Controls, Vcl.Forms, Vcl.Dialogs, AdvSmoothLabel, AdvSmoothProgressBar;
+
+type
+  TfProgress = class(TForm)
+    pbItemProgress: TAdvSmoothProgressBar;
+    pbArchive: TAdvSmoothProgressBar;
+    lFileName: TAdvSmoothLabel;
+    lFileNum: TAdvSmoothLabel;
+  private
+    { Déclarations privées }
+  public
+    { Déclarations publiques }
+  end;
+
+var
+  fProgress: TfProgress;
+
+implementation
+
+{$R *.dfm}
+
+end.

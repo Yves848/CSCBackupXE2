@@ -1,0 +1,16 @@
+<div ng-controller="DetailController">
+<h2>DETAIL ..... Update N° {{id}}</h2>
+
+<table class="table table-stripped table-hover">
+    <tr dir-paginate="log in logs|itemsPerPage:50">
+        <td>{{log.date}}</td>
+        <td>{{log.description}}</td>
+    </tr>
+</table>
+    <dir-pagination-controls
+            max-size="50"
+            direction-links="true"
+            boundary-links="true" >
+    </dir-pagination-controls>
+
+</div>

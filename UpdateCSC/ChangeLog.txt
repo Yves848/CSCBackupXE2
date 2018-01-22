@@ -1,0 +1,86 @@
+Change Log
+----------
+
+2016-05-01		1.0.0.4
+				- Adding a parameter '/PATH' to specify another directory than the default one (c:\corilus_backup).
+				  The directory is renamed c:\corilus_backup_old before starting the update.
+				
+2016-07-27		1.0.0.5
+				- Optimizing the use of the temp folder
+				- Changing the copying method to avoid trying to copy empty folders (even though, there was no error)
+				
+2016-07-29		1.0.0.6	
+                - Adding a parameter '/INTERACTIVE'.  This will start the update program in a visible and intercative
+				  mode to apply update/installation manually.
+				- Generating a log file in the installation destination directory.
+				
+2016-08-02		1.0.0.7
+				- Improving log file.
+				- Adding then sending of a result mail at the end of the update process.
+				
+2016-08-04		1.0.0.9
+				- CSCBackupXE 1.1.0.51 build
+				- Adding CRC32 in the Zip detail log.
+				
+2016-08-05		1.0.0.10
+				- Checking if the process "OPSWBACKUP.EXE" is running.  If so, it's a first time deployment (upgrade) and it has to before
+				  killed before continuing.
+				- Checking if the process "CSCBACKUPXE.exe" is running.  If so, it's an update.  Try to kill before continuing.
+				- An "Undo" zip file is generated in a temp folder before executing the update.
+				- Fixing bugs in initial deployment (if no previous / old backup present)
+				
+2016-08-08		1.0.0.12
+				- CSCBackupXE 1.1.0.53 build
+				- Adding FTP transfer of the log file for verification purposes.
+				
+2016-08-11		1.0.0.13
+				- Fixing bug in the Process detection and killing.
+				
+2016-09-02		1.0.0.14
+				- Adding a parameter '/FTP:' to force or change the FTP destination of the log file.
+				  The structure of the parameter is : /FTP:ftpUser|ftpPassword@ftpUrl (example : /FTP:sherpagr-log|sh3rpaLog@ftp.sherpagreenock.be)
+				  The FTP defaults are : 
+				     - FTP site : ftp.sherpagreenock.be
+					 - FTP user : sherpagr-log
+					 - FTP pswd : sh3rpaLog
+					 
+2016-09-02		1.0.0.16
+				- CSCBackupXE 1.1.0.55 build
+				
+2016-09-05		1.0.0.17
+				- When killing "running backup" task, wait UP TO 15 seconds for the process to stop.
+				
+2016-09-08		1.0.0.18
+				- CSCBackupXE 1.1.0.57 build
+				
+2016-09-15		1.0.0.19
+				- Adjusting FTP timeout delay
+				
+2017-03-20		1.0.0.21
+				- The logs of the update are posted to a service in JSON format.
+				- The FTP upload of the logs art still in this version.
+				- CSCBackupXE 1.1.1.0 build
+				  Transition version to "dashboard".
+				  
+2017-05-17		1.0.0.24
+				- Modifying date and time formats to suit with SQLite on the dash server.
+				- CSCBackupXE 1.1.1.2 build
+
+2017-11-29		2.0.0.29
+				- CSCBackupXE 2.0.0.0 (first realease)
+					Remark : The bacup console is not complete yet.
+					Configuration is made by editing .set files
+				- Using JSON for logs.
+
+2017-12-01		2.0.0.31
+				- CSCBackupXE 2.0.1.0
+
+2018-01-15		2.0.0.33
+				- Extracting APB Number with GreenockMaintenanceDB /APB to store in file APB.JSON
+				- CSCBackupXE 2.0.2.0
+
+2018-01-16		2.0.0.34
+				- CSCBackupXE 2.0.2.1
+
+2018-01-17		2.1.0.34
+				- CSCBackupXE 2.1.0.0
